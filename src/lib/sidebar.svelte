@@ -1,6 +1,6 @@
 <script>
   import { base } from '$app/paths'; // for github pages
-  import HomeOutline from "svelte-material-icons/HomeOutline.svelte";
+  import Home from "svelte-material-icons/Home.svelte";
   import MessageText from "svelte-material-icons/MessageText.svelte";
   import CardsPlayingSpadeMultiple from "svelte-material-icons/CardsPlayingSpadeMultiple.svelte"
   //icon options
@@ -16,7 +16,7 @@
     <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
       <li class="nav-item">
     <a href="{base}/" class="nav-link py-3 border-bottom" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Home">
-      <HomeOutline  {size} {width} {height} {color}/>
+      <Home  {size} {width} {height} {color}/>
     </a>
       </li>
       <li>
