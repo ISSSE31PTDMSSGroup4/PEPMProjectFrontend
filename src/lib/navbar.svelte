@@ -2,7 +2,7 @@
   import { base } from '$app/paths'; // for github pages
   import UserOptions from './navbar-components/userOptions.svelte'
   //user logged in TODO
-  let user=false;
+  let user=true;
   
 </script>
 <div>

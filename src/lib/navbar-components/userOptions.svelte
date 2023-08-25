@@ -1,7 +1,6 @@
 <!--- User Profile Picture & options -->
 <script>
   import { base } from '$app/paths'; // for github pages
-  import Account from "svelte-material-icons/Account.svelte";
   export let size = "2.4em"; // string | number
   export let width = size; // string | number
   export let height = size; // string | number

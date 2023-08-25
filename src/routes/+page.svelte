@@ -1,5 +1,6 @@
 <script>
     import PersonAdd from "svelte-bootstrap-icons/lib/PersonAdd.svelte";
+    import Messages from '../lib/messages.svelte'
     export let size = "2em"; // string | number
     export let width = size; // string | number
     export let height = size; // string | number
@@ -106,7 +107,7 @@
             </div>
         </div>
         <div class="col-9">
-            Chat Content
+            <Messages/>
         </div>
     </div>
 </div>
