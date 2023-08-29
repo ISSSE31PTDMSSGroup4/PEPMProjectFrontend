@@ -220,16 +220,16 @@
 </div>
 
 <style>
-ul,
-li
-{
-    margin: 0;
-    padding: 0;
-    border: 0;
-    font-size: 100%;
-    font: inherit;
-    vertical-align: baseline;
-}
+    ul,
+    li
+    {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font-size: 100%;
+        font: inherit;
+        vertical-align: baseline;
+    }
 
     small {
         color: #a9a9a9;
