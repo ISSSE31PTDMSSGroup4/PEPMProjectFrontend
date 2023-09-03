@@ -33,7 +33,11 @@ jobs:
          sudo apt-get update
          sudo apt-get install python3-pip -y
          sudo pip3 install awscli --upgrade
+      
       - name: deploy to s3
         run: |
          aws s3 sync build/ s3://${{ secrets.S3_BUCKET_NAME }} --delete
-         echo 'done'
+      
+      - name: invalidate old cache on S3
+        run: aws s3 cp s3://${{ secrets.S3_BUCKET_NAME }}/index.html s3://${{ secrets.S3_BUCKET_NAME }}/index.html --cache-control \"max-age=0, must-revalidate\" --metadata-directive REPLACE --acl public-read
+
