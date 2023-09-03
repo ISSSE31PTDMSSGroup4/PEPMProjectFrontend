@@ -40,5 +40,5 @@ jobs:
         sudo pip3 install awscli --upgrade
      - name: deploy to s3
        run: |
-        aws s3 sync build/ s3://${{ env.S3_BUCKET_NAME }} --delete
+        aws s3 sync build/ s3://${{ secrets.S3_BUCKET_NAME }} --delete
         echo 'done'
