@@ -1,129 +1,146 @@
 <script>
-    import PersonAdd from "svelte-bootstrap-icons/lib/PersonAdd.svelte";
     import Messages from "../lib/messages.svelte";
-    export let size = "2em"; // string | number
-    export let width = size; // string | number
-    export let height = size; // string | number
-    export let color = "primary";
-    let users = [
-        {
-            id: 1,
-            name: "Allen Panda",
-            avartar: "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
-            unread: 3,
-        },
-        {
-            id: 2,
-            name: "CC",
-            avartar: "https://mdbcdn.b-cdn.net/img/new/avatars/3.webp",
-            unread: 1,
-        },
-        {
-            id: 3,
-            name: "SSSr",
-            avartar: "https://mdbcdn.b-cdn.net/img/new/avatars/4.webp",
-            unread: 0,
-        },
-        {
-            id: 4,
-            name: "Test Account",
-            avartar: "https://mdbcdn.b-cdn.net/img/new/avatars/5.webp",
-            unread: 0,
-        },
-        {
-            id: 5,
-            name: "QWERT",
-            avartar: "https://mdbcdn.b-cdn.net/img/new/avatars/6.webp",
-            unread: 0,
-        },
-    ];
-    export let selectedUserId = 1;
-    function handleUserSelect(item) {
-        console.log(item);
-        selectedUserId = item.id;
-        item.unread = 0;
-    }
-
-    const handleNewUserClick = () => {
-        let newUser = {
-            id: -999,
-            name: "New chat",
-            avartar: "",
-            unread: 0,
-        };
-
-        if (users.findIndex((e) => e.id === -999) != -1) {
-            return;
-        }
-
-        users = [newUser, ...users];
-        // users.concat(newUser);
-        handleUserSelect(newUser);
+    import UserList from "../lib/user-list.svelte";
+    import NewChat from "../lib/new-chat.svelte";
+    let selectedUser = {
+        id: 1,
+        name: "Allen Panda",
+        avartar: "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
+        status: "Online",
+        messageGroup: [
+                {
+                    id: 1,
+                    time: "19-08-23 7:32 pm",
+                    messages: [
+                        {
+                            id: 111312,
+                            user: {
+                                userId: 0,
+                                name: "Me",
+                                avartar:
+                                    "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp",
+                            },
+                            message: "Test message from me",
+                        },
+                        {
+                            id: 111232,
+                            user: {
+                                userId: 1,
+                                name: "Allen Panda",
+                                avartar:
+                                    "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
+                            },
+                            message: "Good evening",
+                        },
+                    ],
+                },
+                {
+                    id: 2,
+                    time: "Monday 12:32 pm",
+                    messages: [
+                        {
+                            id: 114152,
+                            user: {
+                                userId: 0,
+                                name: "Me",
+                                avartar:
+                                    "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp",
+                            },
+                            message: "How is it going?",
+                        },
+                        {
+                            id: 156654,
+                            user: {
+                                userId: 1,
+                                name: "Allen Panda",
+                                avartar:
+                                    "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
+                            },
+                            message: "Great!",
+                        },
+                    ],
+                },
+                {
+                    id: 3,
+                    time: "Yesterday 15:11 pm",
+                    messages: [
+                        {
+                            id: 125676,
+                            user: {
+                                userId: 1,
+                                name: "Allen Panda",
+                                avartar:
+                                    "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
+                            },
+                            message: "See u tmr",
+                        },
+                        {
+                            id: 215315,
+                            user: {
+                                userId: 0,
+                                name: "Me",
+                                avartar:
+                                    "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp",
+                            },
+                            message: "See u",
+                        },
+                    ],
+                },
+                {
+                    id: 4,
+                    time: "09:00 pm",
+                    messages: [
+                        {
+                            id: 125326,
+                            user: {
+                                userId: 1,
+                                name: "Allen Panda",
+                                avartar:
+                                    "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
+                            },
+                            message: "where are u?",
+                        },
+                        {
+                            id: 154314,
+                            user: {
+                                userId: 1,
+                                name: "Allen Panda",
+                                avartar:
+                                    "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
+                            },
+                            message: "I just arrived",
+                        },
+                        {
+                            id: 765365,
+                            user: {
+                                userId: 0,
+                                name: "Me",
+                                avartar:
+                                    "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp",
+                            },
+                            message: "On the bus, coming",
+                        },
+                    ],
+                },
+            ],
+    };
+    const handleSelectedUserChanged = (e) => {
+        console.log("selectedUser", e.detail);
+        selectedUser = e.detail;
     };
 </script>
 
 <div class="container-fluid">
     <div class="row">
         <div class="col-3 d-flex flex-column flex-shrink-0 bg-light">
-            <div class="row">
-                <nav class="navbar navbar-light bg-light">
-                    <span class="navbar-brand">Chat</span>
-                    <div class="nav justify-content-end">
-                        <button
-                            on:click={handleNewUserClick}
-                            class="nav-link py-3 border-bottom"
-                            title=""
-                            data-bs-toggle="tooltip"
-                            data-bs-placement="right"
-                            data-bs-original-title="Chat"
-                        >
-                            <PersonAdd {size} {width} {height} {color} />
-                        </button>
-                    </div>
-                </nav>
-            </div>
-            <div class="row">
-                <div class="list-group">
-                    {#each users as user}
-                        <button
-                            class="list-group-item list-group-item-action {user.id ===
-                            selectedUserId
-                                ? 'active'
-                                : ''} d-flex justify-content-start align-items-center"
-                            style="height:4em;"
-                            on:click={handleUserSelect(user)}
-                        >
-                            <div class="col-2">
-                                <img
-                                    src={user.avartar}
-                                    class="rounded-circle"
-                                    style="width: {width}; size:{size}; width:{width};height:{height};"
-                                    alt="Avatar"
-                                />
-                            </div>
-                            <div class="col-8">
-                                {user.name}
-                            </div>
-                            <div class="col-2">
-                                <span class="badge bg-danger rounded-pill">
-                                    {#if user.unread > 0}
-                                        {user.unread}
-                                    {/if}
-                                </span>
-                            </div>
-                        </button>
-                    {/each}
-                </div>
-            </div>
+            <UserList on:selectedUser={handleSelectedUserChanged} />
         </div>
-        <div class="col-9">
-            <Messages />
+        <div class="col-9 d-flex flex-column flex-shrink-0 bg-light">
+            {#if selectedUser.id < 0}
+                <NewChat />
+            {:else}
+                <Messages targetUser={selectedUser}/>
+            {/if}
         </div>
     </div>
 </div>
-
-<style>
-    .navbar {
-        padding: 0.5rem 1rem;
-    }
-</style>
