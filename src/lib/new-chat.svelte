@@ -12,6 +12,10 @@
         { id: 9, email: "si@feovlin.uk" },
         { id: 88, email: "imiiko@gewat.uy" },
     ];
+
+    const sendMessage = (e) => {
+        
+    }
 </script>
 
 <div class="input-group mb-3">
@@ -39,7 +43,7 @@
     </div>
 </div>
 
-<Sendbox />
+<Sendbox on:messageSent={sendMessage}/>
 
 <style>
     .new-conversation {
