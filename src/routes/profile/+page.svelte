@@ -1,14 +1,15 @@
 <script>
+	import Spinner from './../../lib/spinner.svelte';
     import { onMount, onDestroy, afterUpdate } from "svelte";
+    import { baseApiUrl, getUserProfileUrl } from '../constants';
 
-    const url =
-        "https://8f5ba74a-a863-484b-824d-d597cb270504.mock.pstmn.io/user/profile";
+    const url = baseApiUrl + getUserProfileUrl;
     let promise = fetchData();
 
     let profileData = {};
 
     onMount(async () => {
-        await fetchData();
+        //await fetchData();
     });
 
     onDestroy(() => {});
@@ -32,7 +33,7 @@
         <div class="row d-flex justify-content-center align-items-center h-100">
             <div class="col col-lg-9 col-xl-7">
                 {#await promise}
-                    <p>Loading...</p>
+                    <Spinner/>
                 {:then data}
                     <div class="card">
                         <div

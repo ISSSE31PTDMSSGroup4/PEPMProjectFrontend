@@ -99,7 +99,9 @@
         <div class="flex-shrink-0">
             <img
                 class="rounded-circle"
-                src={targetUser.avartar}
+                src={targetUser.avartar
+                    ? targetUser.avartar
+                    : "./icons8-user-96.png"}
                 alt="avatar"
                 width="60px"
             />
@@ -127,7 +129,9 @@
                             >
                                 <img
                                     class="rounded-circle"
-                                    src={message.user?.avartar}
+                                    src={message.user.avartar
+                                        ? message.user.avartar
+                                        : "./icons8-user-96.png"}
                                     alt="avatar"
                                     width="50px"
                                 />

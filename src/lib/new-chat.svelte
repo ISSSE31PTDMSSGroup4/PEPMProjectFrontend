@@ -1,6 +1,9 @@
 <script>  
     import Sendbox from "./sendbox.svelte";   
+    import { createEventDispatcher } from "svelte";
+    const dispatch = createEventDispatcher();
 
+    let newUserEmail = '';
     let liveSearchUsers = [
         { id: 7, email: "te@wohkajok.nu" },
         { id: 10, email: "bedsehab@ponmad.gs" },
@@ -14,7 +17,35 @@
     ];
 
     const sendMessage = (e) => {
-        
+        if(!newUserEmail){ return; }
+        var msg = e.detail;
+        var newUser = {
+            id: Math.random(100,1000),
+            name: newUserEmail,
+            avartar: undefined,
+            unread: 0,
+            status: "Offline",
+            messageGroup: [
+                {
+                    id: Math.random(100,1000),
+                    time: "Just now",
+                    messages: [
+                        {
+                            id: Math.random(100,1000),
+                            user: {
+                                userId: 0,
+                                name: "Me",
+                                avartar:
+                                    "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp",
+                            },
+                            message: msg,
+                        }
+                    ],
+                },
+            ],
+        }
+        console.log("newChatCreated", newUser);
+        dispatch("newChatCreated", newUser);
     }
 </script>
 
@@ -24,6 +55,7 @@
         class="form-control"
         list="datalistOptions"
         placeholder="Type to search..."
+        bind:value={newUserEmail}
     />
 
     <datalist id="datalistOptions">
