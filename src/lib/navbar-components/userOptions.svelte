@@ -21,7 +21,7 @@
         </a>
       </div>
       <div class="col">
-        <a class="dropdown-toggle" href="{base}/" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <a class="dropdown-toggle" href={routeRoot} data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
           <img src={avartar} class="rounded-circle" style="width: {width}; size:{size}; width:{width};height:{height};" alt="Avatar" />
         </a>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink" >
@@ -36,7 +36,7 @@
 
 {:else}
   <!---User not logged in, show login button, should probably put this in userOptions -->
-  <a href='{routeBase}{routeRoot}'><button class="btn btn-primary" on:click={ () => user=!user}>
+  <a href='{routeRoot}'><button class="btn btn-primary" on:click={ () => user=!user}>
     login
   </button>
   </a>
