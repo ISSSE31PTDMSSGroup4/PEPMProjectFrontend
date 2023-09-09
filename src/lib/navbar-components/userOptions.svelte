@@ -14,20 +14,20 @@
   <li class="nav-item">
     <div class="row">
       <div class="col">
-        <a href='{routeLogout}'>
+        <a href={routeLogout}>
           <button class = "btn btn-primary btn-md" on:click={ () => user=!user}>
             Signout
           </button>
         </a>
       </div>
       <div class="col">
-        <a class="dropdown-toggle" href="/" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <a class="dropdown-toggle" href={routeRoot} data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
           <img src={avartar} class="rounded-circle" style="width: {width}; size:{size}; width:{width};height:{height};" alt="Avatar" />
         </a>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink" >
-          <a class = "dropdown-item" href='{routeProfile}'>Profile</a>
+          <a class = "dropdown-item" href={routeProfile}>Profile</a>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href='{routeAbout}'>About MSE Teams</a>
+          <a class="dropdown-item" href={routeAbout}>About MSE Teams</a>
         </div>
       </div>
     </div>
@@ -36,7 +36,7 @@
 
 {:else}
   <!---User not logged in, show login button, should probably put this in userOptions -->
-  <a href='{routeBase}{routeRoot}'><button class="btn btn-primary" on:click={ () => user=!user}>
+  <a href={routeRoot}><button class="btn btn-primary" on:click={ () => user=!user}>
     login
   </button>
   </a>
