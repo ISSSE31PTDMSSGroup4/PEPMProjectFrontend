@@ -1,5 +1,5 @@
 <script>
-  import { base } from "$app/paths"; // for github pages
+  import { routeBase, routeRoot, routeQuiz } from './../routes/constants.js';
   import Bell from "svelte-bootstrap-icons/lib/Bell.svelte";
   import ChatDots from "svelte-bootstrap-icons/lib/ChatDots.svelte";
 
@@ -8,13 +8,16 @@
   export let width = size; // string | number
   export let height = size; // string | number
   export let color = "primary";
+
+  let rootUrl = routeBase + routeRoot;
+  let quizUrl = routeBase + routeQuiz;
 </script>
 
 <div class="d-flex flex-column flex-shrink-0 bg-light" style="width: 4.5rem;">
   <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
     <li>
       <a
-        href="{base}/"
+        href={rootUrl}
         class="nav-link py-3 border-bottom"
         title=""
         data-bs-toggle="tooltip"
@@ -26,7 +29,7 @@
     </li>
     <li>
       <a
-        href="{base}/quiz"
+        href={quizUrl}
         class="nav-link py-3 border-bottom"
         title=""
         data-bs-toggle="tooltip"
