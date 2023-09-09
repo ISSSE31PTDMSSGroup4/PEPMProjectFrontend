@@ -9,8 +9,8 @@
   export let height = size; // string | number
   export let color = "primary";
 
-  let rootUrl = routeBase + routeRoot;
-  let quizUrl = routeBase + routeQuiz;
+  let rootUrl = routeRoot;
+  let quizUrl = routeQuiz;
 </script>
 
 <div class="d-flex flex-column flex-shrink-0 bg-light" style="width: 4.5rem;">
