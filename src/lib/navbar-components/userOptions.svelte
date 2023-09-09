@@ -26,7 +26,7 @@
         </a>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink" >
           <a class = "dropdown-item" href='{base}/profile'>Profile</a>
-          <a class = "dropdown-item" href='{base}/account'>Account</a>
+          <!-- <a class = "dropdown-item" href='{base}/account'>Account</a> -->
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href='{base}/about'>About MSE Teams</a>
         </div>
