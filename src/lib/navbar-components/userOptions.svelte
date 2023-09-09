@@ -1,6 +1,6 @@
 <!--- User Profile Picture & options -->
 <script>
-  import { base } from '$app/paths'; // for github pages
+	import { routeRoot, routeProfile, routeAbout, routeLogout } from './../../routes/constants.js';
   export let size = "2.4em"; // string | number
   export let width = size; // string | number
   export let height = size; // string | number
@@ -14,7 +14,7 @@
   <li class="nav-item">
     <div class="row">
       <div class="col">
-        <a href='{base}/logout'>
+        <a href='{routeLogout}'>
           <button class = "btn btn-primary btn-md" on:click={ () => user=!user}>
             Signout
           </button>
@@ -25,10 +25,9 @@
           <img src={avartar} class="rounded-circle" style="width: {width}; size:{size}; width:{width};height:{height};" alt="Avatar" />
         </a>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink" >
-          <a class = "dropdown-item" href='{base}/profile'>Profile</a>
-          <!-- <a class = "dropdown-item" href='{base}/account'>Account</a> -->
+          <a class = "dropdown-item" href='{routeProfile}'>Profile</a>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href='{base}/about'>About MSE Teams</a>
+          <a class="dropdown-item" href='{routeAbout}'>About MSE Teams</a>
         </div>
       </div>
     </div>
@@ -37,7 +36,7 @@
 
 {:else}
   <!---User not logged in, show login button, should probably put this in userOptions -->
-  <a href='{base}/'><button class="btn btn-primary" on:click={ () => user=!user}>
+  <a href='{routeBase}{routeRoot}'><button class="btn btn-primary" on:click={ () => user=!user}>
     login
   </button>
   </a>
