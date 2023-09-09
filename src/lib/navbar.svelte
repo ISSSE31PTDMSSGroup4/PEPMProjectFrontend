@@ -1,5 +1,5 @@
 <script>
-	import { routeBase, routeRoot } from './../routes/constants.js';
+	import { routeRoot } from './../routes/constants.js';
   import UserOptions from './navbar-components/userOptions.svelte'
   //user logged in TODO
   let user=true;

@@ -1,5 +1,5 @@
 <script>
-  import { routeBase, routeRoot, routeQuiz } from './../routes/constants.js';
+  import { routeRoot, routeQuiz } from './../routes/constants.js';
   import Bell from "svelte-bootstrap-icons/lib/Bell.svelte";
   import ChatDots from "svelte-bootstrap-icons/lib/ChatDots.svelte";
 
