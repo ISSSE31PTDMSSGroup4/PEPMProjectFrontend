@@ -17,7 +17,7 @@ jobs:
       - run: npm install
       - name: build
         env:
-          BASE_PATH: '/web'
+          BASE_PATH: ''
         run: |
           npm run build
     
