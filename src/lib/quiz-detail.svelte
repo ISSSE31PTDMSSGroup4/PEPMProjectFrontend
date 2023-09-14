@@ -27,6 +27,22 @@
             throw new Error(text);
         }
     }
+
+    const handleNextClick = (e) => {
+        if(currIndex >= quizDetail?.questions.length){return;}
+        currIndex++;
+        question = quizDetail?.questions?.find(
+                (x) => x.index == currIndex
+            );
+    };
+
+    const handlePreviousClick = (e) => {
+        if(currIndex <= 1){ return; }
+        currIndex--;
+        question = quizDetail?.questions?.find(
+                (x) => x.index == currIndex
+            );
+    };
 </script>
 
 {#await fetchData(targetQuiz)}
@@ -75,12 +91,14 @@
                         <button
                             class="btn btn-primary d-flex align-items-center btn-danger"
                             type="button"
+                            on:click={handlePreviousClick}
                             ><i
                                 class="fa fa-angle-left mt-1 mr-1"
-                            />&nbsp;previous</button
+                            />Previous</button
                         ><button
                             class="btn btn-primary border-success align-items-center btn-success"
                             type="button"
+                            on:click={handleNextClick}
                             >Next<i class="fa fa-angle-right ml-2" /></button
                         >
                     </div>
