@@ -1,9 +1,15 @@
 <script>
     import { onMount, onDestroy, afterUpdate } from "svelte";
     import Spinner from "./spinner.svelte";
-    import { baseApiUrl, getQuizDetailUrl } from "../routes/constants.js";
+    import {
+        baseApiUrl,
+        getQuizDetailUrl,
+        viewMode,
+        editMode,
+    } from "../routes/constants.js";
 
     export let targetQuiz = undefined;
+    export let quizDetailMode = viewMode;
     let quizDetail = undefined;
     let currIndex = 1;
     let question = undefined;
@@ -16,11 +22,10 @@
         }
         const response = await fetch(url + "?quiz_id=" + targetQuiz.id);
         if (response.ok) {
+            currIndex = 1;
             const data = await response.json();
             quizDetail = data;
-            question = quizDetail?.questions?.find(
-                (x) => x.index == currIndex
-            );
+            question = quizDetail?.questions?.find((x) => x.index == currIndex);
             return data;
         } else {
             const text = await response.text();
@@ -29,25 +34,25 @@
     }
 
     const handleNextClick = (e) => {
-        if(currIndex >= quizDetail?.questions.length){return;}
+        if (currIndex >= quizDetail?.questions.length) {
+            return;
+        }
         currIndex++;
-        question = quizDetail?.questions?.find(
-                (x) => x.index == currIndex
-            );
+        question = quizDetail?.questions?.find((x) => x.index == currIndex);
     };
 
     const handlePreviousClick = (e) => {
-        if(currIndex <= 1){ return; }
+        if (currIndex <= 1) {
+            return;
+        }
         currIndex--;
-        question = quizDetail?.questions?.find(
-                (x) => x.index == currIndex
-            );
+        question = quizDetail?.questions?.find((x) => x.index == currIndex);
     };
 </script>
 
 {#await fetchData(targetQuiz)}
     <Spinner size="spinner-grow-lg" />
-{:then quizDetail}
+{:then data}
     <div class="container mt-5">
         <div class="d-flex justify-content-center row">
             <div class="col-md-12 col-lg-12">
@@ -56,7 +61,18 @@
                         <div
                             class="d-flex flex-row justify-content-between align-items-center mcq"
                         >
-                            <h4>{quizDetail?.title}</h4>
+                            {#if quizDetailMode == editMode}
+                                <div class="mb-10 lg-8">
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        bind:value={quizDetail.title}
+                                    />
+                                </div>
+                            {:else}
+                                <h4>{quizDetail?.title}</h4>
+                            {/if}
+
                             <span
                                 >({currIndex} of {quizDetail?.questions
                                     .length})</span
@@ -67,21 +83,39 @@
                         <div
                             class="d-flex flex-row align-items-center question-title"
                         >
-                            <h3 class="text-primary">Q. </h3>
-                            <h5 class="mt-1 ml-2">
-                                {question?.title}
-                            </h5>
+                            <h3 class="text-primary">Q{currIndex}.</h3>
+
+                            {#if quizDetailMode == editMode}
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    bind:value={question.title}
+                                />
+                            {:else}
+                                <h5 class="mt-1 ml-2">
+                                    {question?.title}
+                                </h5>
+                            {/if}
                         </div>
                         <br />
                         {#each question?.options as option, optionIndex}
                             <div class="ml-12">
-                                <input
-                                    type="radio"
-                                    bind:group={selectedOption}
-                                    value={option}
-                                    id={optionIndex}
-                                />
-                                <label for={optionIndex}>{option}</label>
+                                {#if quizDetailMode == editMode}
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        bind:value={option}
+                                        style="margin-bottom: 1rem;"
+                                    />
+                                {:else}
+                                    <input
+                                        type="radio"
+                                        bind:group={selectedOption}
+                                        value={option}
+                                        id={optionIndex}
+                                    />
+                                    <label for={optionIndex}>{option}</label>
+                                {/if}
                             </div>
                         {/each}
                     </div>

@@ -11,3 +11,6 @@ export const routeProfile = base +"/profile";
 export const routeAbout = base +"/about";
 export const routeLogin = base +"/login";
 export const routeLogout = base +"/logout";
+
+export const viewMode = 1;
+export const editMode = 2;

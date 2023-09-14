@@ -3,7 +3,12 @@
     import { createEventDispatcher } from "svelte";
     import Spinner from './spinner.svelte';
     import PencilSquare from "svelte-bootstrap-icons/lib/PencilSquare.svelte";
-    import { baseApiUrl, getUserQuizListUrl } from '../routes/constants.js';
+    import CheckSquare from "svelte-bootstrap-icons/lib/CheckSquare.svelte";
+    import XSquare from "svelte-bootstrap-icons/lib/XSquare.svelte";
+    import PlusCircle from "svelte-bootstrap-icons/lib/PlusCircle.svelte";
+    import { baseApiUrl, getUserQuizListUrl, viewMode, editMode } from '../routes/constants.js';
+
+    export let quizDetailMode = viewMode;
 
     const url = baseApiUrl + getUserQuizListUrl;
     const dispatch = createEventDispatcher();
@@ -22,8 +27,28 @@
     onDestroy(() => {});
 
     export const handleQuizSelect = (item) => {
+        if(selectedId == item.id) {return;}
         selectedId = item.id;
         dispatch("selectedQuiz", item);
+    };
+
+    export const handleQuizDetailMode = (mode) => {
+        dispatch("quizDetailMode", mode);
+    };
+
+    const updateQuizDetailType = () => {
+        let mode = quizDetailMode;
+        if(selectedId < 0){ 
+            return;
+        }
+        else if(quizDetailMode == viewMode){
+            mode = editMode;
+        }
+        else if(quizDetailMode == editMode){
+            mode = viewMode;
+        }
+        quizDetailMode = mode;
+        handleQuizDetailMode(mode);
     };
 
     async function fetchData() {
@@ -50,8 +75,16 @@
                 data-bs-toggle="tooltip"
                 data-bs-placement="right"
                 data-bs-original-title="Quiz"
-            >               
+                on:click={updateQuizDetailType}
+            >             
+            {#if selectedId <= 0}  
+                <PlusCircle {size} {width} {height} {color} />
+            {:else if quizDetailMode == viewMode}
                 <PencilSquare {size} {width} {height} {color} />
+            {:else if quizDetailMode == editMode}
+                <XSquare {size} {width} {height} color = "red"/>
+                <!-- <CheckSquare {size} {width} {height} color = "green" /> -->
+            {/if}
             </button>
         </div>
     </nav>
@@ -64,6 +97,7 @@
             {:then data}
                 {#each quizzes as quiz}
                     <button
+                        disabled = {quizDetailMode == editMode}
                         class="list-group-item list-group-item-action {quiz.id ===
                         selectedId
                             ? 'active'
