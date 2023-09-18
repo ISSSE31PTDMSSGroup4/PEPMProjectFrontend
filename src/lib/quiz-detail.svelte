@@ -119,6 +119,37 @@
                             </div>
                         {/each}
                     </div>
+                    <div class="p-3 bg-white">
+                        <div class="d-flex flex-row align-items-center">
+                            <h5 style="margin-right: 1rem;">Answer:</h5>
+                            {#if quizDetailMode == editMode}
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    bind:value={question.answer}
+                                    style="margin-bottom: 1rem;"
+                                />
+                            {:else}
+                                <h5 class="text-secondary">
+                                    {question?.answer}
+                                </h5>
+                            {/if}
+                        </div>
+                        <div class="d-flex flex-row align-items-center">
+                            <h5 style="margin-right: 1rem;">Expanation:</h5>
+                            {#if quizDetailMode == editMode}
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    bind:value={question.explanation}
+                                />
+                            {:else}
+                                <span class="text-secondary">
+                                    {question?.explanation}
+                                </span>
+                            {/if}
+                        </div>
+                    </div>
                     <div
                         class="d-flex flex-row justify-content-between align-items-center p-3 bg-white"
                     >
