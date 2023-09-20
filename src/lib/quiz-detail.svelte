@@ -1,6 +1,11 @@
 <script>
+    import NodePlus from "svelte-bootstrap-icons/lib/NodePlus.svelte";
+    import Trash from "svelte-bootstrap-icons/lib/Trash.svelte";
+
     import { onMount, onDestroy, afterUpdate } from "svelte";
     import Spinner from "./spinner.svelte";
+    import AddQuestion from "./add-question-modal.svelte";
+
     import {
         baseApiUrl,
         getQuizDetailUrl,
@@ -10,10 +15,18 @@
 
     export let targetQuiz = undefined;
     export let quizDetailMode = viewMode;
+
+    let size = "2em"; // string | number
+    let width = size; // string | number
+    let height = size; // string | number
+    let color = "primary";
+    const modalId = "createQuestion";
+
     let quizDetail = undefined;
     let currIndex = 1;
     let question = undefined;
     let selectedOption = "";
+    let isCreatQuestionOpen = false;
     const url = baseApiUrl + getQuizDetailUrl;
 
     async function fetchData(targetQuiz) {
@@ -48,6 +61,10 @@
         currIndex--;
         question = quizDetail?.questions?.find((x) => x.index == currIndex);
     };
+    
+    const handleCreateQuestionClick = (e) =>{
+        isCreatQuestionOpen = true;
+    }
 </script>
 
 {#await fetchData(targetQuiz)}
@@ -63,9 +80,24 @@
                         >
                             {#if quizDetailMode == editMode}
                                 <div class="mb-10 lg-8">
+                                    <button
+                                        class="nav-link py-3 border-bottom"
+                                        title=""
+                                        data-bs-toggle="tooltip"
+                                        data-bs-placement="right"
+                                        data-bs-original-title="AddQuiz"
+                                    >
+                                        <Trash
+                                            {size}
+                                            {width}
+                                            {height}
+                                            color="red"
+                                        />
+                                    </button>
                                     <input
                                         type="text"
                                         class="form-control"
+                                        style="margin-bottom: 1rem;"
                                         bind:value={quizDetail.title}
                                     />
                                 </div>
@@ -78,7 +110,38 @@
                                     .length})</span
                             >
                         </div>
+                        <div class="flex-row">
+                            {#if quizDetailMode == editMode}
+                                <div class="mb-12 lg-12">
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        bind:value={quizDetail.remark}
+                                    />
+                                </div>
+                            {:else}
+                                <h5>{quizDetail?.remark}</h5>
+                            {/if}
+                        </div>
                     </div>
+                    {#if quizDetailMode == editMode}
+                        <div style="margin-left: 1rem; margin-top: 1rem;">
+                            <button
+                                class="btn btn-primary border-primary align-items-center btn-primary"
+                                type="button"
+                                data-mdb-ripple-color="dark"
+                                style="z-index: 1;"
+                                data-bs-toggle="modal"
+                                data-bs-target="#{modalId}">
+                                Add Question
+                                </button>
+                            <button
+                                class="btn btn-danger border-danger align-items-center btn-danger"
+                                type="button">Remove Question</button
+                            >
+                        </div>
+                    {/if}
+
                     <div class="question bg-white p-3 border-bottom">
                         <div
                             class="d-flex flex-row align-items-center question-title"
@@ -156,16 +219,36 @@
                         <button
                             class="btn btn-primary d-flex align-items-center btn-danger"
                             type="button"
+                            style="visibility: {currIndex <= 1
+                                ? 'hidden'
+                                : 'visible'};"
                             on:click={handlePreviousClick}
                             ><i
                                 class="fa fa-angle-left mt-1 mr-1"
                             />Previous</button
-                        ><button
-                            class="btn btn-primary border-success align-items-center btn-success"
-                            type="button"
-                            on:click={handleNextClick}
-                            >Next<i class="fa fa-angle-right ml-2" /></button
                         >
+                        {#if currIndex >= quizDetail?.questions.length && quizDetailMode == editMode}
+                            <button
+                                class="btn btn-primary border-primary align-items-center btn-primary"
+                                type="button"
+                                >Apply Change<i
+                                    class="fa fa-angle-right ml-2"
+                                /></button
+                            >
+                        {:else}
+                            <button
+                                class="btn btn-primary border-success align-items-center btn-success"
+                                type="button"
+                                style="visibility: {currIndex >=
+                                quizDetail?.questions.length
+                                    ? 'collapse'
+                                    : 'visible'};"
+                                on:click={handleNextClick}
+                                >Next<i
+                                    class="fa fa-angle-right ml-2"
+                                /></button
+                            >
+                        {/if}
                     </div>
                 </div>
             </div>
@@ -174,3 +257,5 @@
 {:catch error}
     <p style="color: red">{error.message}</p>
 {/await}
+
+<AddQuestion {modalId}/>
