@@ -5,9 +5,11 @@
     let quizListChild;
     let selectedQuiz = undefined;
     let quizDetailMode = viewMode;
+    let quizDetailRefreshTrig = {};
     const handleSelectedQuizChanged = (e) => {
         console.log("selectedQuiz", e.detail);
         selectedQuiz = e.detail;
+        quizDetailRefreshTrig = {};
     };
 
     const handleQuizDetailModeChanged = (e) => {
@@ -30,7 +32,7 @@
             {:else if selectedQuiz.id < 0}
                 <!-- <NewChat on:newChatCreated={handleNewChatCreated}/> -->
             {:else}
-                <QuizDetail targetQuiz={selectedQuiz} {quizDetailMode}/>
+                <QuizDetail reloadTrigger={quizDetailRefreshTrig} targetQuiz={selectedQuiz} {quizDetailMode}/>
             {/if}
         </div>
     </div>
