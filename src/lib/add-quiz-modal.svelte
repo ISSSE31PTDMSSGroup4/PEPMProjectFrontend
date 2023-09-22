@@ -2,8 +2,12 @@
     import { onMount, onDestroy, afterUpdate } from "svelte";
     import AddQuestion from "./add-question.svelte";
     import Spinner from "./spinner.svelte";
-    import { baseApiUrl } from "../routes/constants.js";
+    import { baseApiUrl, quizUrl } from "../routes/constants.js";
     export let modalId = "";
+
+    const quizReqUrl = baseApiUrl + quizUrl;
+    let processing = false;
+    let promise;
     let quiz = {
         title: "",
         questions: [
@@ -16,6 +20,29 @@
         ],
         remark: "",
     };
+    export const handleQuizSubmit = () => {
+        processing = true;
+        promise = addQuiz();
+    };
+
+    async function addQuiz() {
+        const response = await fetch(quizReqUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+            },
+            body: JSON.stringify(quiz),
+        });
+        if (response.ok) {
+            const data = await response.json();
+            console.log("request success", data);
+            location.reload();
+        } else {
+            const text = await response.text();
+            alert(text);
+        }
+    }
 </script>
 
 <!-- Modal -->
@@ -71,7 +98,19 @@
                     class="btn btn-secondary"
                     data-bs-dismiss="modal">Close</button
                 >
-                <button type="button" class="btn btn-primary">Create</button>
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    disabled={processing}
+                    on:click={handleQuizSubmit}
+                >
+                    {#if processing}
+                        <span class="spinner-border spinner-border-sm" />
+                        Processing...
+                    {:else}
+                        Create
+                    {/if}
+                </button>
             </div>
         </div>
     </div>

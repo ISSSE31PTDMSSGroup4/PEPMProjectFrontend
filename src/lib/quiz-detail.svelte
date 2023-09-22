@@ -16,6 +16,7 @@
 
     export let targetQuiz = undefined;
     export let quizDetailMode = viewMode;
+    export let reloadTrigger = {};
 
     const size = "2em"; // string | number
     const width = size; // string | number
@@ -25,7 +26,6 @@
     const url = baseApiUrl + getQuizDetailUrl;
     const quizReqUrl = baseApiUrl + quizUrl;
     const questionReqUrl = baseApiUrl + questionUrl;
-    let reloadTrigger = {};
     let quizDetail = undefined;
     let currIndex = 1;
     let question = undefined;
@@ -34,6 +34,8 @@
     let removeQuestionModalId = "removeQuestionModalId";
     let removeQuizProcessing = false;
     let removeQuestionProcessing = false;
+    let editPromise;
+    let editQuizProcessing = false;
     async function fetchData() {
         if (!targetQuiz) {
             return;
@@ -57,7 +59,6 @@
         }
         currIndex++;
         question = quizDetail?.questions?.find((x) => x.index == currIndex);
-
     };
 
     const handlePreviousClick = (e) => {
@@ -67,6 +68,32 @@
         currIndex--;
         question = quizDetail?.questions?.find((x) => x.index == currIndex);
     };
+
+    const handleApplyChangesClick = (e) => {
+        editPromise = editQuiz();
+    };
+
+    async function editQuiz() {
+        console.log("request body", quizDetail);
+        editQuizProcessing = true;
+        const response = await fetch(quizReqUrl, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Access-Control-Allow-Origin": "*",
+            },
+            body: JSON.stringify(quizDetail),
+        });
+        if (response.ok) {
+            const data = await response.json();
+            console.log("request success", data);
+            reloadTrigger = {};
+        } else {
+            const text = await response.text();
+            alert(text);
+        }
+        editQuizProcessing = false;
+    }
 
     async function removeQuiz() {
         const response = await fetch(quizReqUrl, {
@@ -107,7 +134,7 @@
             const data = await response.json();
             console.log("request success", data);
             removeQuestionProcessing = false;
-            reloadTrigger = {};          
+            reloadTrigger = {};
         } else {
             const text = await response.text();
             alert(text);
@@ -288,10 +315,18 @@
                                 <button
                                     class="btn btn-primary border-primary align-items-center btn-primary"
                                     type="button"
-                                    >Apply Change<i
-                                        class="fa fa-angle-right ml-2"
-                                    /></button
+                                    disabled = {editQuizProcessing}
+                                    on:click={handleApplyChangesClick}
                                 >
+                                    {#if editQuizProcessing}
+                                        <span
+                                            class="spinner-border spinner-border-sm"
+                                        />
+                                        Processing...
+                                    {:else}
+                                        Apply Changes
+                                    {/if}
+                                </button>
                             {:else}
                                 <button
                                     class="btn btn-primary border-success align-items-center btn-success"
@@ -311,26 +346,30 @@
                 </div>
             </div>
         </div>
+
+        <AddQuestionModal
+            {modalId}
+            quizId={quizDetail.id}
+            index={quizDetail.questions.length}
+        />
+        <PopupModal
+            id={removeQuizModalId}
+            title="Remove Quiz"
+            content="Are you sure to remove this quiz?"
+            buttonText="Remove"
+            processing={removeQuizProcessing}
+            on:buttonHandler={removeQuiz}
+        />
+        <PopupModal
+            id={removeQuestionModalId}
+            title="Remove Question"
+            content="Are you sure to remove this question?"
+            buttonText="Remove"
+            processing={removeQuestionProcessing}
+            closeAftSubmit={true}
+            on:buttonHandler={removeQuestion}
+        />
     {:catch error}
         <p style="color: red">{error.message}</p>
     {/await}
 {/key}
-
-<AddQuestionModal {modalId} />
-<PopupModal
-    id={removeQuizModalId}
-    title="Remove Quiz"
-    content="Are you sure to remove this quiz?"
-    buttonText="Remove"
-    processing={removeQuizProcessing}
-    on:buttonHandler={removeQuiz}
-/>
-<PopupModal
-    id={removeQuestionModalId}
-    title="Remove Question"
-    content="Are you sure to remove this question?"
-    buttonText="Remove"
-    processing={removeQuestionProcessing}
-    closeAftSubmit={true}
-    on:buttonHandler={removeQuestion}
-/>
