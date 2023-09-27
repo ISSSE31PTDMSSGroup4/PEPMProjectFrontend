@@ -30,8 +30,8 @@
     let currIndex = 1;
     let question = undefined;
     let selectedOption = "";
-    let removeQuizModalId = "removeQuizModalId";
-    let removeQuestionModalId = "removeQuestionModalId";
+    let removeQuizModal;
+    let removeQuestionModal;
     let removeQuizProcessing = false;
     let removeQuestionProcessing = false;
     let editPromise;
@@ -73,6 +73,14 @@
         editPromise = editQuiz();
     };
 
+    const removeQuizClick = (e) => {
+        removeQuizModal.showHandler();
+    };
+
+    const removeQuestionClick = (e) => {
+        removeQuestionModal.showHandler();
+    };
+
     async function editQuiz() {
         console.log("request body", quizDetail);
         editQuizProcessing = true;
@@ -109,8 +117,9 @@
         if (response.ok) {
             const data = await response.json();
             console.log("request success", data);
-            location.reload();
+            removeQuizModal.closeHandler();            
             removeQuizProcessing = false;
+            reloadTrigger = {};
         } else {
             const text = await response.text();
             alert(text);
@@ -133,7 +142,9 @@
         if (response.ok) {
             const data = await response.json();
             console.log("request success", data);
-            removeQuestionProcessing = false;
+                      
+            removeQuizModal.closeHandler();
+            removeQuestionProcessing = false;  
             reloadTrigger = {};
         } else {
             const text = await response.text();
@@ -159,10 +170,7 @@
                                     <div class="mb-10 lg-8">
                                         <button
                                             class="nav-link py-3 border-bottom"
-                                            data-mdb-ripple-color="dark"
-                                            style="z-index: 1;"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#{removeQuizModalId}"
+                                            on:click={removeQuizClick}
                                         >
                                             <Trash
                                                 {size}
@@ -216,10 +224,7 @@
                                 <button
                                     class="btn btn-danger border-danger align-items-center btn-danger"
                                     type="button"
-                                    data-mdb-ripple-color="dark"
-                                    style="z-index: 1;"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#{removeQuestionModalId}"
+                                    on:click={removeQuestionClick}
                                     >Remove Question</button
                                 >
                             </div>
@@ -353,20 +358,19 @@
             index={quizDetail.questions.length}
         />
         <PopupModal
-            id={removeQuizModalId}
             title="Remove Quiz"
             content="Are you sure to remove this quiz?"
             buttonText="Remove"
             processing={removeQuizProcessing}
+            bind:this={removeQuizModal}
             on:buttonHandler={removeQuiz}
         />
         <PopupModal
-            id={removeQuestionModalId}
             title="Remove Question"
             content="Are you sure to remove this question?"
             buttonText="Remove"
             processing={removeQuestionProcessing}
-            closeAftSubmit={true}
+            bind:this={removeQuestionModal}
             on:buttonHandler={removeQuestion}
         />
     {:catch error}

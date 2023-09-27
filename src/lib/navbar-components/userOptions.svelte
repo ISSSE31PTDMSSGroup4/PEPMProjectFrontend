@@ -1,28 +1,30 @@
 <!--- User Profile Picture & options -->
 <script>
-	import { routeRoot, routeProfile, routeAbout, routeLogout } from './../../routes/constants.js';
+  import { onMount, onDestroy, afterUpdate } from "svelte";
+	import { routeRoot, routeProfile, routeAbout, routeLogout, routeLogin } from './../../routes/constants.js';
+  import { user } from '../../routes/store.js';
   export let size = "2.4em"; // string | number
   export let width = size; // string | number
   export let height = size; // string | number
-  export let color= "black";
-  export let user;
-  export let avartar ="https://mdbcdn.b-cdn.net/img/new/avatars/2.webp";
+  //export let color= "black";
+  const logoutHandle = () => {
+        user.set(undefined);
+        location.replace(routeLogin);
+    };
 </script>
-{#if user}
+{#if $user}
 <!---User logged in, show options -->
 <ul class="nav justify-content-end">
   <li class="nav-item">
     <div class="row">
       <div class="col">
-        <a href={routeLogout}>
-          <button class = "btn btn-primary btn-md" on:click={ () => user=!user}>
-            Signout
-          </button>
-        </a>
+        <button class = "btn btn-primary btn-md" on:click={logoutHandle}>
+          Signout
+        </button>
       </div>
       <div class="col">
         <a class="dropdown-toggle" href={routeRoot} data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-          <img src={avartar} class="rounded-circle" style="width: {width}; size:{size}; width:{width};height:{height};" alt="Avatar" />
+          <img src={$user.avartar} class="rounded-circle" style="width: {width}; size:{size}; width:{width};height:{height};" alt="Avartar" />
         </a>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink" >
           <a class = "dropdown-item" href={routeProfile}>Profile</a>
@@ -36,7 +38,7 @@
 
 {:else}
   <!---User not logged in, show login button, should probably put this in userOptions -->
-  <a href={routeRoot}><button class="btn btn-primary" on:click={ () => user=!user}>
+  <a href={routeLogin}><button class="btn btn-primary">
     login
   </button>
   </a>
