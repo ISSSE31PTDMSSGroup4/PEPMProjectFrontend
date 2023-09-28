@@ -1,7 +1,8 @@
 <script>
     import QuizList from "../../lib/quiz-list.svelte";
     import QuizDetail from "../../lib/quiz-detail.svelte";
-    import { viewMode, editMode } from '../constants';
+    import { viewMode, editMode } from "../constants";
+    import { reloadQuiz } from "../store";
     let quizListChild;
     let selectedQuiz = undefined;
     let quizDetailMode = viewMode;
@@ -16,24 +17,40 @@
         console.log("quizDetailMode", e.detail);
         quizDetailMode = e.detail;
     };
+    reloadQuiz.subscribe((value) => {
+        selectedQuiz = undefined;
+        quizDetailMode = viewMode;
+    });
 </script>
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-lg-3 col-sm-5 d-flex flex-column flex-shrink-0 bg-light">
-            <QuizList bind:this={quizListChild} 
-            on:selectedQuiz={handleSelectedQuizChanged} 
-            on:quizDetailMode={handleQuizDetailModeChanged} 
-            {quizDetailMode}/>
-        </div>
-        <div class="col-lg-9 col-sm-7 d-flex flex-column flex-shrink-0 bg-light">
-            {#if !selectedQuiz}
-                <h1>No Quiz selected</h1>
-            {:else if selectedQuiz.id < 0}
-                <!-- <NewChat on:newChatCreated={handleNewChatCreated}/> -->
-            {:else}
-                <QuizDetail reloadTrigger={quizDetailRefreshTrig} targetQuiz={selectedQuiz} {quizDetailMode}/>
-            {/if}
+{#key $reloadQuiz}
+    <div class="container-fluid">
+        <div class="row">
+            <div
+                class="col-lg-3 col-sm-5 d-flex flex-column flex-shrink-0 bg-light"
+            >
+                <QuizList
+                    bind:this={quizListChild}
+                    on:selectedQuiz={handleSelectedQuizChanged}
+                    on:quizDetailMode={handleQuizDetailModeChanged}
+                    {quizDetailMode}
+                />
+            </div>
+            <div
+                class="col-lg-9 col-sm-7 d-flex flex-column flex-shrink-0 bg-light"
+            >
+                {#if !selectedQuiz}
+                    <h1>No Quiz selected</h1>
+                {:else if selectedQuiz.id < 0}
+                    <!-- <NewChat on:newChatCreated={handleNewChatCreated}/> -->
+                {:else}
+                    <QuizDetail
+                        reloadTrigger={quizDetailRefreshTrig}
+                        targetQuiz={selectedQuiz}
+                        {quizDetailMode}
+                    />
+                {/if}
+            </div>
         </div>
     </div>
-</div>
+{/key}

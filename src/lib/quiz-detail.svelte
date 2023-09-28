@@ -3,8 +3,8 @@
     import Trash from "svelte-bootstrap-icons/lib/Trash.svelte";
     import { onMount, onDestroy, afterUpdate } from "svelte";
     import Spinner from "./spinner.svelte";
-    import AddQuestionModal from "./add-question-modal.svelte";
     import PopupModal from "./popup-modals/popup-modal.svelte";
+    import AddQuestionModal from "./popup-modals/add-question-modal.svelte";
     import {
         baseApiUrl,
         getQuizDetailUrl,
@@ -13,6 +13,7 @@
         viewMode,
         editMode,
     } from "../routes/constants.js";
+    import { reloadQuiz } from "../routes/store";
 
     export let targetQuiz = undefined;
     export let quizDetailMode = viewMode;
@@ -22,16 +23,17 @@
     const width = size; // string | number
     const height = size; // string | number
     const color = "primary";
-    const modalId = "createQuestion";
     const url = baseApiUrl + getQuizDetailUrl;
     const quizReqUrl = baseApiUrl + quizUrl;
     const questionReqUrl = baseApiUrl + questionUrl;
+
+    let createQuestionObj;
     let quizDetail = undefined;
     let currIndex = 1;
     let question = undefined;
     let selectedOption = "";
-    let removeQuizModalId = "removeQuizModalId";
-    let removeQuestionModalId = "removeQuestionModalId";
+    let removeQuizModal;
+    let removeQuestionModal;
     let removeQuizProcessing = false;
     let removeQuestionProcessing = false;
     let editPromise;
@@ -73,6 +75,21 @@
         editPromise = editQuiz();
     };
 
+    const removeQuizClick = (e) => {
+        removeQuizModal.showHandler();
+    };
+
+    const removeQuestionClick = (e) => {
+        removeQuestionModal.showHandler();
+    };
+
+    const createQuestionClick = (e) => {
+        createQuestionObj.showHandler();
+    };
+    const handleQuestionCreated = () => {
+        reloadTrigger = {};
+    };
+
     async function editQuiz() {
         console.log("request body", quizDetail);
         editQuizProcessing = true;
@@ -96,6 +113,7 @@
     }
 
     async function removeQuiz() {
+        removeQuizProcessing = true; 
         const response = await fetch(quizReqUrl, {
             method: "DELETE",
             headers: {
@@ -109,8 +127,9 @@
         if (response.ok) {
             const data = await response.json();
             console.log("request success", data);
-            location.reload();
-            removeQuizProcessing = false;
+            removeQuizModal.closeHandler();
+            removeQuizProcessing = false;       
+            reloadQuiz.set({});
         } else {
             const text = await response.text();
             alert(text);
@@ -119,6 +138,7 @@
     }
 
     async function removeQuestion() {
+        removeQuestionProcessing = true;
         const response = await fetch(questionReqUrl, {
             method: "DELETE",
             headers: {
@@ -133,6 +153,8 @@
         if (response.ok) {
             const data = await response.json();
             console.log("request success", data);
+
+            removeQuizModal.closeHandler();
             removeQuestionProcessing = false;
             reloadTrigger = {};
         } else {
@@ -159,10 +181,7 @@
                                     <div class="mb-10 lg-8">
                                         <button
                                             class="nav-link py-3 border-bottom"
-                                            data-mdb-ripple-color="dark"
-                                            style="z-index: 1;"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#{removeQuizModalId}"
+                                            on:click={removeQuizClick}
                                         >
                                             <Trash
                                                 {size}
@@ -208,18 +227,14 @@
                                     type="button"
                                     data-mdb-ripple-color="dark"
                                     style="z-index: 1;"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#{modalId}"
+                                    on:click={createQuestionClick}
                                 >
                                     Add Question
                                 </button>
                                 <button
                                     class="btn btn-danger border-danger align-items-center btn-danger"
                                     type="button"
-                                    data-mdb-ripple-color="dark"
-                                    style="z-index: 1;"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#{removeQuestionModalId}"
+                                    on:click={removeQuestionClick}
                                     >Remove Question</button
                                 >
                             </div>
@@ -315,7 +330,7 @@
                                 <button
                                     class="btn btn-primary border-primary align-items-center btn-primary"
                                     type="button"
-                                    disabled = {editQuizProcessing}
+                                    disabled={editQuizProcessing}
                                     on:click={handleApplyChangesClick}
                                 >
                                     {#if editQuizProcessing}
@@ -348,25 +363,25 @@
         </div>
 
         <AddQuestionModal
-            {modalId}
             quizId={quizDetail.id}
-            index={quizDetail.questions.length}
+            index={quizDetail.index}
+            bind:this={createQuestionObj}
+            on:questionCreated={handleQuestionCreated}
         />
         <PopupModal
-            id={removeQuizModalId}
             title="Remove Quiz"
             content="Are you sure to remove this quiz?"
             buttonText="Remove"
             processing={removeQuizProcessing}
+            bind:this={removeQuizModal}
             on:buttonHandler={removeQuiz}
         />
         <PopupModal
-            id={removeQuestionModalId}
             title="Remove Question"
             content="Are you sure to remove this question?"
             buttonText="Remove"
             processing={removeQuestionProcessing}
-            closeAftSubmit={true}
+            bind:this={removeQuestionModal}
             on:buttonHandler={removeQuestion}
         />
     {:catch error}
