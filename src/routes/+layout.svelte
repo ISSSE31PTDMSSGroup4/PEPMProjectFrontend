@@ -64,7 +64,7 @@
 </div>
 {:else if creatingProfile === true}
   <div class="d-flex flex-row justify-content-between align-items-center text-center">
-     <h1 style="text-align: center;">Creating New User Profile</h1>
+     <h1 style="text-align: center;">Welcome</h1>
   </div>
 {:else}
   <Spinner/>

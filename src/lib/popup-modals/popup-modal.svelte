@@ -2,11 +2,11 @@
   import Modal from './base-modal.svelte';
   import { onMount, onDestroy, afterUpdate } from "svelte";
   import { createEventDispatcher } from "svelte";
+  
   export let title = "";
   export let content = "";
   export let buttonText = "Confirm";  
   export let processing = false;
-  export let closeAftSubmit = false;
   let showModal = false;
   let buttonType = "btn-primary";
   let modalObj;
@@ -19,14 +19,6 @@
   });
 
   const buttonHandler = () => {
-    if (!content) {
-      return;
-    }
-
-    if(!closeAftSubmit){
-      processing = true;
-    }
-    console.log("buttonHandler triggered");
     dispatch("buttonHandler");
   };
 

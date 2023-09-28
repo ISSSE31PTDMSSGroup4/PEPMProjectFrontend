@@ -20,6 +20,18 @@
     let modalObj;
     let processing = false;
     let buttoneText = mode === "edit" ? "Save Changes" : "Submit";
+    let fileinput;
+
+    const onFileSelected = (e) => {
+        let image = e.target.files[0];
+        let reader = new FileReader();
+        reader.readAsDataURL(image);
+        reader.onload = (e) => {
+            profileData.avartar = e.target.result;
+            $user.avartar =  e.target.result;
+            //TODO: Call API to upload the avartar file
+        };
+    };
 
     export const showHandler = () => {
         showModal = true;
@@ -108,8 +120,20 @@
                         <div class="mt-5 text-center">
                             <button
                                 class="btn btn-outline-primary profile-button"
-                                type="button">Upload Avartar</button
+                                type="button"
+                                on:click={() => {
+                                    fileinput.click();
+                                }}
                             >
+                                Upload Avartar
+                            </button>
+                            <input
+                                style="display:none"
+                                type="file"
+                                accept=".jpg, .jpeg, .png"
+                                on:change={(e) => onFileSelected(e)}
+                                bind:this={fileinput}
+                            />
                         </div>
                     </div>
                 </div>

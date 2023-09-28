@@ -17,3 +17,5 @@ user.subscribe((value) => {
         window.localStorage.user = JSON.stringify(value);
     }
 });
+
+export let reloadQuiz = writable({});

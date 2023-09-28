@@ -1,16 +1,18 @@
 <script>
-	import { user } from './../store.js';
-	import Spinner from './../../lib/spinner.svelte';
+    import { user } from "./../store.js";
+    import Spinner from "./../../lib/spinner.svelte";
     import { onMount, onDestroy, afterUpdate } from "svelte";
-    import ProfileModal from '../../lib/popup-modals/profile-modal.svelte';
+    import ProfileModal from "../../lib/popup-modals/profile-modal.svelte";
 
     let profileModalObj;
     let profileData = $user;
-    onMount(async () => {
-
-    });
+    onMount(async () => {});
 
     onDestroy(() => {});
+
+    user.subscribe((value) => {
+        profileData = value;
+    });
 </script>
 
 <section class="h-100 gradient-custom-2">
@@ -33,24 +35,16 @@
                                 class="img-fluid img-thumbnail mt-4 mb-2"
                                 style="width: 150px; z-index: 1"
                             />
-                            <!-- <button
+                            <button
                                 type="button"
                                 class="btn btn-outline-primary"
-                                data-mdb-ripple-color="dark"
                                 style="z-index: 1;"
-                                data-bs-toggle="modal"
-                                data-bs-target="#editProfileModal"
+                                on:click={() => {
+                                    profileModalObj.showHandler();
+                                }}
                             >
                                 Edit profile
-                            </button> -->
-                            <button
-                            type="button"
-                            class="btn btn-outline-primary"
-                            style="z-index: 1;"
-                            on:click={()=>{profileModalObj.showHandler()}}
-                        >
-                            Edit profile
-                        </button>
+                            </button>
                         </div>
                         <div class="ms-3" style="margin-top: 130px;">
                             <h5>{profileData.name}</h5>
@@ -81,11 +75,10 @@
                     <div class="card-body p-4 text-black">
                         <div class="mb-5">
                             <p class="lead fw-normal mb-1">About</p>
-                            <div
-                                class="p-4"
-                                style="background-color: #f8f9fa;"
-                            >
-                                <p class="font-italic mb-1">{profileData.about}</p>
+                            <div class="p-4" style="background-color: #f8f9fa;">
+                                <p class="font-italic mb-1">
+                                    {profileData.about}
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -117,7 +110,12 @@
         );
     }
 
-    textarea { resize:none; }
+    textarea {
+        resize: none;
+    }
 
-    p { word-wrap:break-word; white-space: pre-line;}
+    p {
+        word-wrap: break-word;
+        white-space: pre-line;
+    }
 </style>

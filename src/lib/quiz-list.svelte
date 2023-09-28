@@ -12,8 +12,8 @@
         viewMode,
         editMode,
     } from "../routes/constants.js";
-    import AddQuizModal from "./add-quiz-modal.svelte";
-
+    import AddQuizModal from "./popup-modals/add-quiz-modal.svelte";
+    import { reloadQuiz } from "../routes/store";
     export let quizDetailMode = viewMode;
 
     const url = baseApiUrl + getUserQuizListUrl;
@@ -23,10 +23,9 @@
     let width = size; // string | number
     let height = size; // string | number
     let color = "primary";
-
+    let createQuizModalObj;
     let quizzes = undefined;
     let selectedId = -1;
-    let modalId = "createQuiz";
 
     onMount(async () => {});
 
@@ -42,6 +41,14 @@
 
     export const handleQuizDetailMode = (mode) => {
         dispatch("quizDetailMode", mode);
+    };
+
+    export const handleCreateQuiz = () => {
+        createQuizModalObj.showHandler();
+    };
+
+    export const handleQuizCreated = () => {
+        reloadQuiz.set({});
     };
 
     const updateQuizDetailType = () => {
@@ -94,8 +101,7 @@
                 class="nav-link py-3 border-bottom"
                 data-mdb-ripple-color="dark"
                 style="z-index: 1;"
-                data-bs-toggle="modal"
-                data-bs-target="#{modalId}"
+                on:click={handleCreateQuiz}
             >
                 {#if selectedId <= 0 || quizDetailMode == viewMode}
                     <PlusSquare {size} {width} {height} color="green" />
@@ -132,7 +138,10 @@
     </div>
 </div>
 
-<AddQuizModal {modalId}/>
+<AddQuizModal
+    bind:this={createQuizModalObj}
+    on:quizCreated={handleQuizCreated}
+/>
 
 <style>
     .navbar {
