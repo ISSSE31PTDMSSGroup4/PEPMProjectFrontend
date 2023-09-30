@@ -16,7 +16,7 @@ export const routeRoot = base + "/";
 export const routeQuiz = base +"/quiz";
 export const routeProfile = base +"/profile";
 export const routeAbout = base +"/about";
-export const routeLogin = "http://localhost:5000/login";
+export const routeLogin = "https://issse31ptdmss.xyz/api/auth/initiate_auth";
 export const routeLogout = base +"/logout";
 
 export const viewMode = 1;
