@@ -3,11 +3,11 @@
     import { createEventDispatcher } from "svelte";
     import AddQuestion from "../add-question.svelte";
     import Spinner from "../spinner.svelte";
-    import { baseApiUrl, quizUrl } from "../../routes/constants.js";
+    import { quizUrl } from "../../routes/constants.js";
     import Modal from "./base-modal.svelte";
 
     const dispatch = createEventDispatcher();
-    const quizReqUrl = baseApiUrl + quizUrl;
+    const quizReqUrl = quizUrl;
     let showModal = false;
     let modalObj;
     let processing = false;

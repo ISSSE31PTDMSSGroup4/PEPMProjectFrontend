@@ -2,7 +2,6 @@
     import { user } from "./../../routes/store.js";
     import Modal from "./base-modal.svelte";
     import {
-        baseApiUrl,
         userProfileUrl,
         routeLogin,
     } from "../../routes/constants";
@@ -14,7 +13,7 @@
         email: "",
         about: "",
     };
-    const url = baseApiUrl + userProfileUrl;
+    const url = userProfileUrl;
     let formTitle = mode === "edit" ? "Edit" : "Create";
     let showModal = false;
     let modalObj;

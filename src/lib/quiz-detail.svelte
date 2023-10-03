@@ -6,7 +6,6 @@
     import PopupModal from "./popup-modals/popup-modal.svelte";
     import AddQuestionModal from "./popup-modals/add-question-modal.svelte";
     import {
-        baseApiUrl,
         getQuizDetailUrl,
         quizUrl,
         questionUrl,
@@ -23,9 +22,9 @@
     const width = size; // string | number
     const height = size; // string | number
     const color = "primary";
-    const url = baseApiUrl + getQuizDetailUrl;
-    const quizReqUrl = baseApiUrl + quizUrl;
-    const questionReqUrl = baseApiUrl + questionUrl;
+    const url = getQuizDetailUrl;
+    const quizReqUrl = quizUrl;
+    const questionReqUrl = questionUrl;
 
     let createQuestionObj;
     let quizDetail = undefined;

@@ -7,7 +7,6 @@
     import XSquare from "svelte-bootstrap-icons/lib/XSquare.svelte";
     import PlusSquare from "svelte-bootstrap-icons/lib/PlusSquare.svelte";
     import {
-        baseApiUrl,
         getUserQuizListUrl,
         viewMode,
         editMode,
@@ -16,7 +15,7 @@
     import { reloadQuiz } from "../routes/store";
     export let quizDetailMode = viewMode;
 
-    const url = baseApiUrl + getUserQuizListUrl;
+    const url = getUserQuizListUrl;
     const dispatch = createEventDispatcher();
 
     let size = "2em"; // string | number

@@ -5,13 +5,12 @@
     import Spinner from "../spinner.svelte";
     import { createEventDispatcher } from "svelte";
     import {
-        baseApiUrl,
         questionUrl,
     } from "../../routes/constants.js";
     export let quizId = "";
     export let index = "";
     const dispatch = createEventDispatcher();
-    const questionReqUrl = baseApiUrl + questionUrl;
+    const questionReqUrl = questionUrl;
     let processing = false;
     let showModal;
     let modalObj;

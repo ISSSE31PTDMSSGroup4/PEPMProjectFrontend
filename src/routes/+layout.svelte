@@ -5,9 +5,9 @@
   import Navbar from "../lib/navbar.svelte";
   import Sidebar from "../lib/sidebar.svelte";
   import { user } from './store';
-  import { baseApiUrl, userProfileUrl } from './constants.js';
+  import { userProfileUrl } from './constants.js';
   import ProfileModal from '../lib/popup-modals/profile-modal.svelte';
-  const url = baseApiUrl + userProfileUrl;
+  const url = userProfileUrl;
   
   let profileModalObj;
   let creatingProfile = false;

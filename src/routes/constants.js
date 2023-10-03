@@ -1,23 +1,27 @@
 import { base } from "$app/paths";
 //Team Postman Mock Server
-//export const baseApiUrl = "https://3a2e6f26-d322-46fe-a0b5-2dd5a314213d.mock.pstmn.io"; 
+//const baseApiUrl = "https://3a2e6f26-d322-46fe-a0b5-2dd5a314213d.mock.pstmn.io"; 
 //Personal Postman Mock Server
-export const baseApiUrl = "https://ff948a46-4e47-449c-a535-c017e0b56331.mock.pstmn.io";
+const baseApiUrl = "https://88847fa7-9974-44f1-b303-5e68a533bd65.mock.pstmn.io";
 //Domain Server
-//export const baseApiUrl = "https://issse31ptdmss.xyz/api";
+//const baseApiUrl = "https://issse31ptdmss.xyz/api";
+const chatServiceBaseUrl = "http://localhost:8000/api";
+const loginServiceBaseUrl = "http://localhost:5000";
 
-export const userProfileUrl = "/user/profile";
-export const getUserQuizListUrl = "/quiz/list";
-export const getQuizDetailUrl = "/quiz/detail";
-export const quizUrl = "/quiz";
-export const questionUrl = "/quiz/question";
+export const userProfileUrl = baseApiUrl + "/user/profile";
+export const getUserQuizListUrl = baseApiUrl + "/quiz/list";
+export const getQuizDetailUrl = baseApiUrl + "/quiz/detail";
+export const quizUrl = baseApiUrl + "/quiz";
+export const questionUrl = baseApiUrl + "/quiz/question";
+export const pusherCfgUrl = chatServiceBaseUrl + "/pusher_config";
+export const pusherMessageUrl = chatServiceBaseUrl + "/message";
 
 export const routeRoot = base + "/";
 export const routeQuiz = base +"/quiz";
 export const routeProfile = base +"/profile";
 export const routeAbout = base +"/about";
-export const routeLogin = "http://localhost:5000/login";
 export const routeLogout = base +"/logout";
+export const routeLogin = loginServiceBaseUrl + "/login";
 
 export const viewMode = 1;
 export const editMode = 2;

@@ -1,7 +1,6 @@
 <script>
     import { onMount, onDestroy, afterUpdate } from "svelte";
     import Spinner from "./spinner.svelte";
-    import { baseApiUrl } from "../routes/constants.js";
     export let question = {
         title: "",
         options: ["", "", "", ""],

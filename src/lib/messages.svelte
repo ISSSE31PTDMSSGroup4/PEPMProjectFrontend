@@ -1,8 +1,16 @@
 <script lang="ts">
+	import Pusher from 'pusher-js';
 	import Messages from './messages.svelte';
     import Sendbox from "./sendbox.svelte";
     import { onMount, onDestroy, afterUpdate } from "svelte";
+    import { pusherCfgUrl, pusherMessageUrl } from '../routes/constants';
+    import { user } from '../routes/store';
+
     let newMessage = "";
+    let pusher;
+    let channel;
+    let messages;
+
     export let targetUser = {
         id: 1,
         name: "Allen Panda",
@@ -12,6 +20,17 @@
     };
 
     onMount(async () => {
+        Pusher.logToConsole = true;
+        // Fetch Pusher configuration from the backend
+        const response = await fetch(pusherCfgUrl);
+        const config = await response.json();
+        pusher = new Pusher(config.key, 
+        // pusher key
+        {
+            cluster: config.cluster,
+            // authEndpoint: '/pusher/auth'
+        });
+        
         console.log('test');
         scrollToBottom();
     });
@@ -29,10 +48,10 @@
         console.log(domWrapper.scrollTop);
     };
 
-    const sendMessage = (e) => {
+    const sendMessage = async (e) => {
         let content = e.detail;
         console.log("send msg", content);
-
+        await submit(content);
         if(targetUser.messageGroup && targetUser.messageGroup.length > 0){
             var lastMsgGroupItem = targetUser.messageGroup[targetUser.messageGroup.length - 1]
             if(lastMsgGroupItem.messages.length > 0){
@@ -92,6 +111,47 @@
             targetUser.messageGroup = newMsgGroup;
         }
     };
+
+    
+    const submit = async (msg) => {
+        console.log("submit triggered");
+
+        let date = new Date();
+        let localTime = date.toLocaleString('en-US', { timeZone: 'Asia/Singapore' });
+
+        await fetch(pusherMessageUrl, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                username : $user.name,
+                receiver: targetUser.name,
+                message : msg,
+                time: localTime
+            })
+        });
+    }
+
+    function getChannelName(username,receiver){
+        // Sort the usernames
+        const sortedUsernames = [username, receiver].sort();
+
+        // Join with a delimiter
+        const channelName = sortedUsernames[0] + "-" + sortedUsernames[1];
+        
+        console.log(channelName);
+
+        return channelName;
+    }
+
+    const switchReceiver = () => {
+        console.log("receiver: " + targetUser.name);
+        channel = pusher.subscribe(getChannelName($user.name, targetUser.name));
+        messages = [];
+        channel.bind('message', data => {
+            messages = [...messages, data];
+        });
+        // messages = new_messages
+    }
 </script>
 
 <div class="msg-head">

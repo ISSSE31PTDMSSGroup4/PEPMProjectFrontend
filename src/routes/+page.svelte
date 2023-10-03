@@ -1,9 +1,9 @@
 <script>
     import { onMount, onDestroy, afterUpdate } from "svelte";
-
     import Messages from "../lib/messages.svelte";
     import UserList from "../lib/user-list.svelte";
     import NewChat from "../lib/new-chat.svelte";
+
     let userListChild;
 
     let userList = [
