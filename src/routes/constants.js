@@ -2,7 +2,7 @@ import { base } from "$app/paths";
 //Team Postman Mock Server
 //export const baseApiUrl = "https://3a2e6f26-d322-46fe-a0b5-2dd5a314213d.mock.pstmn.io"; 
 //Personal Postman Mock Server
-export const baseApiUrl = "https://ff948a46-4e47-449c-a535-c017e0b56331.mock.pstmn.io";
+export const baseApiUrl = "https://88847fa7-9974-44f1-b303-5e68a533bd65.mock.pstmn.io";
 //Domain Server
 //export const baseApiUrl = "https://issse31ptdmss.xyz/api";
 
