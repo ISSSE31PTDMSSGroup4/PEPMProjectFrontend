@@ -16,7 +16,7 @@ export const routeRoot = base + "/";
 export const routeQuiz = base + "/quiz";
 export const routeProfile = base + "/profile";
 export const routeAbout = base + "/about";
-export const routeLogin = baseApiUrl + "/auth/initiate_auth/";
+export const routeLogin = baseApiUrl + "/auth/initiate_auth";
 export const routeLogout = baseApiUrl + "/auth/logout";
 
 export const viewMode = 1;
