@@ -7,12 +7,16 @@ const baseApiUrl = "https://88847fa7-9974-44f1-b303-5e68a533bd65.mock.pstmn.io";
 //const baseApiUrl = "https://issse31ptdmss.xyz/api";
 const chatServiceBaseUrl = "http://localhost:8000/api";
 const loginServiceBaseUrl = "http://localhost:5000";
+const userServiceBaseUrl = "http://localhost:8001";
 
-export const userProfileUrl = baseApiUrl + "/user/profile";
+export const userProfileUrl = userServiceBaseUrl + "/user/profile";
+export const userProfilesUrl = userServiceBaseUrl + "/user/profiles";
+
 export const getUserQuizListUrl = baseApiUrl + "/quiz/list";
 export const getQuizDetailUrl = baseApiUrl + "/quiz/detail";
 export const quizUrl = baseApiUrl + "/quiz";
 export const questionUrl = baseApiUrl + "/quiz/question";
+
 export const pusherCfgUrl = chatServiceBaseUrl + "/pusher_config";
 export const pusherMessageUrl = chatServiceBaseUrl + "/message";
 

@@ -1,4 +1,5 @@
 <script>
+    import { onMount, onDestroy, afterUpdate } from "svelte";
     import { user } from "./../../routes/store.js";
     import Modal from "./base-modal.svelte";
     import {
@@ -20,7 +21,11 @@
     let processing = false;
     let buttoneText = mode === "edit" ? "Save Changes" : "Submit";
     let fileinput;
-
+    onMount(() => {
+      if($user && mode !== 'edit'){
+        profileData.email == $user.email;
+      }
+    });
     const onFileSelected = (e) => {
         let image = e.target.files[0];
         let reader = new FileReader();
@@ -42,7 +47,16 @@
     };
 
     const submitHandler = async () => {
+        if(!validateBfSubmit()){
+            alert("Please input valid name.");
+            return;
+        }
         await triggerUserProfile();
+    };
+
+    const validateBfSubmit = () => {
+        if(profileData.email == ''){return false;}
+        if(profileData.name == ''){return false;}
     };
 
     async function triggerUserProfile() {
@@ -51,7 +65,7 @@
         let reqBody = {
             id: profileData.id,
             name: profileData.name,
-            avartar: profileData.avartar,
+            // avartar: profileData.avartar,
             email: profileData.email,
             about: profileData.about,
         };
@@ -59,7 +73,7 @@
             method = "POST";
             reqBody = {
                 name: profileData.name,
-                avartar: profileData.avartar,
+                // avartar: profileData.avartar,
                 email: profileData.email,
                 about: profileData.about,
             };
@@ -142,9 +156,23 @@
                             class="d-flex justify-content-between align-items-center mb-3"
                         >
                             <h4 class="text-right">Profile Settings</h4>
+                        </div>                        
+                        <div class="row mt-3">
+                            <div class="col-md-12">
+                                <!-- svelte-ignore a11y-label-has-associated-control -->
+                                <label class="labels">Email</label><input
+                                    type="text"
+                                    class="form-control"
+                                    placeholder="enter email"
+                                    bind:value={profileData.email}
+                                    disabled 
+                                    readonly
+                                />
+                            </div>
                         </div>
                         <div class="row mt-2">
                             <div class="col-md-12">
+                                <!-- svelte-ignore a11y-label-has-associated-control -->
                                 <label class="labels">Nickname</label><input
                                     type="text"
                                     class="form-control"
@@ -155,16 +183,7 @@
                         </div>
                         <div class="row mt-3">
                             <div class="col-md-12">
-                                <label class="labels">Email</label><input
-                                    type="text"
-                                    class="form-control"
-                                    placeholder="enter email"
-                                    bind:value={profileData.email}
-                                />
-                            </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col-md-12">
+                                <!-- svelte-ignore a11y-label-has-associated-control -->
                                 <label class="labels">About Me</label><textarea
                                     type="text"
                                     class="form-control"
