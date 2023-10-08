@@ -11,13 +11,19 @@
 
   let profileModalObj;
   let creatingProfile = false;
+  let loginState = false;
+
   const hardcodeEmail = "zengxianhan@gmail.com";
 
   onMount(async () => {
-    if (!$user) {
-      let result = await fetchData();
-      if (!result) {
-        location.replace(routeLogin);
+    //check login state first
+    loginState = isLoggedIn();
+    if (loginState) {
+      if (!$user) {
+        let result = await fetchData();
+        if (!result) {
+          location.replace(routeLogin);
+        }
       }
     }
   });
@@ -27,11 +33,31 @@
     creatingProfile = true;
   };
 
+  function getCookie(cname) {
+    let name = cname + "=";
+    let ca = document.cookie.split(";");
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) == " ") {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return "";
+  }
+  function isLoggedIn() {
+    let loginState = getCookie("logged_in");
+    if (loginState != "true") {
+      return false;
+    } else return true;
+  }
   async function fetchData() {
     const response = await fetch(url, {
       method: "GET",
       headers: {
-        "X-USER": hardcodeEmail
+        "X-USER": hardcodeEmail,
       },
     });
     if (response.ok) {
@@ -68,6 +94,14 @@
     class="d-flex flex-row justify-content-between align-items-center text-center"
   >
     <h1 style="text-align: center;">Welcome</h1>
+  </div>
+{:else if loginState === false}
+  <div
+    class="d-flex flex-row justify-content-between align-items-center text-center"
+  >
+    <h1 style="text-align: center;">
+      You are not logged in. Click <a href={routeLogin}>here</a> to login
+    </h1>
   </div>
 {:else}
   <Spinner />
