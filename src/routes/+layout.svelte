@@ -12,7 +12,7 @@
   let profileModalObj;
   let creatingProfile = false;
   let loginState = false;
-
+  let errorState = false;
   onMount(async () => {
     //check login state first
     loginState = isLoggedIn();
@@ -20,7 +20,7 @@
       if (!$user) {
         let result = await fetchData();
         if (!result) {
-          location.replace(routeLogin);
+          errorState=true;
         }
       }
     }
@@ -101,6 +101,9 @@
       You are not logged in. Click <a href={routeLogin}>here</a> to login
     </h1>
   </div>
+{:else}
+{:else if errorState === true}
+  <h1>We are having some issues now. Sorry!</h1>
 {:else}
   <Spinner />
 {/if}
