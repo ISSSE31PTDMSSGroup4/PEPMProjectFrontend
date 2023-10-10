@@ -101,7 +101,6 @@
       You are not logged in. Click <a href={routeLogin}>here</a> to login
     </h1>
   </div>
-{:else}
 {:else if errorState === true}
   <h1>We are having some issues now. Sorry!</h1>
 {:else}
