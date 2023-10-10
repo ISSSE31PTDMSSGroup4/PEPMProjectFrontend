@@ -9,7 +9,7 @@
   //export let color= "black";
   const logoutHandle = () => {
         user.set(undefined);
-        location.replace(routeLogin);
+        location.replace(routeLogout);
     };
 </script>
 {#if $user}
