@@ -3,7 +3,7 @@ name: Push to dockerhub
 on:
   push:
     branches:
-      - 'main'
+      - '6-logout-flow-for-frontend'
 jobs:
   docker:
     runs-on: ubuntu-latest
