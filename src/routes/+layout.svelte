@@ -13,20 +13,24 @@
   let creatingProfile = false;
   let loginState = false;
   let mounting = true;
-  let xUser = "";
+  let xUser = "";  
+  let errorState = false;
   let profileData = {
     name: "",
     avatar: "",
     email: "",
     about: "",
   };
-
+  
   onMount(async () => {
     //check login state first
     loginState = isLoggedIn();
     if (loginState) {
       xUser = getXUser();
-      await fetchData();
+      let result = await fetchData();
+      if (!$user || !result) {
+          errorState = true;
+      }
     }
     mounting = false;
   });
@@ -119,6 +123,8 @@
       You are not logged in. Click <a href={routeLogin}>here</a> to login
     </h1>
   </div>
+{:else if errorState === true}
+  <h1>We are having some issues now. Sorry!</h1>
 {:else}
   <Spinner />
 {/if}
