@@ -10,7 +10,7 @@
         {
             id: 1,
             name: "Allen Panda",
-            avartar: "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
+            avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
             unread: 0,
             status: "Online",
             messageGroup: [
@@ -23,7 +23,7 @@
                             user: {
                                 userId: 0,
                                 name: "Me",
-                                avartar:
+                                avatar:
                                     "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp",
                             },
                             message: "Test message from me",
@@ -33,7 +33,7 @@
                             user: {
                                 userId: 1,
                                 name: "Allen Panda",
-                                avartar:
+                                avatar:
                                     "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
                             },
                             message: "Good evening",
@@ -49,7 +49,7 @@
                             user: {
                                 userId: 0,
                                 name: "Me",
-                                avartar:
+                                avatar:
                                     "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp",
                             },
                             message: "How is it going?",
@@ -59,7 +59,7 @@
                             user: {
                                 userId: 1,
                                 name: "Allen Panda",
-                                avartar:
+                                avatar:
                                     "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
                             },
                             message: "Great!",
@@ -75,7 +75,7 @@
                             user: {
                                 userId: 1,
                                 name: "Allen Panda",
-                                avartar:
+                                avatar:
                                     "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
                             },
                             message: "See u tmr",
@@ -85,7 +85,7 @@
                             user: {
                                 userId: 0,
                                 name: "Me",
-                                avartar:
+                                avatar:
                                     "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp",
                             },
                             message: "See u",
@@ -101,7 +101,7 @@
                             user: {
                                 userId: 1,
                                 name: "Allen Panda",
-                                avartar:
+                                avatar:
                                     "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
                             },
                             message: "where are u?",
@@ -111,7 +111,7 @@
                             user: {
                                 userId: 1,
                                 name: "Allen Panda",
-                                avartar:
+                                avatar:
                                     "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
                             },
                             message: "I just arrived",
@@ -121,7 +121,7 @@
                             user: {
                                 userId: 0,
                                 name: "Me",
-                                avartar:
+                                avatar:
                                     "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp",
                             },
                             message: "On the bus, coming",
@@ -133,7 +133,7 @@
         {
             id: 2,
             name: "CC",
-            avartar: "https://mdbcdn.b-cdn.net/img/new/avatars/3.webp",
+            avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/3.webp",
             unread: 1,
             status: "Online",
             messageGroup: [
@@ -146,7 +146,7 @@
                             user: {
                                 userId: 0,
                                 name: "Me",
-                                avartar:
+                                avatar:
                                     "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp",
                             },
                             message: "Test Test",
@@ -156,7 +156,7 @@
                             user: {
                                 userId: 2,
                                 name: "CC",
-                                avartar:
+                                avatar:
                                     "https://mdbcdn.b-cdn.net/img/new/avatars/3.webp",
                             },
                             message: "Test message from user CC",
@@ -168,21 +168,21 @@
         {
             id: 3,
             name: "SSSr",
-            avartar: "https://mdbcdn.b-cdn.net/img/new/avatars/4.webp",
+            avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/4.webp",
             unread: 0,
             status: "Online",
         },
         {
             id: 4,
             name: "Test Account",
-            avartar: "https://mdbcdn.b-cdn.net/img/new/avatars/5.webp",
+            avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/5.webp",
             unread: 0,
             status: "Offline",
         },
         {
             id: 5,
             name: "QWERT",
-            avartar: "https://mdbcdn.b-cdn.net/img/new/avatars/6.webp",
+            avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/6.webp",
             unread: 0,
             status: "Offline",
         },
@@ -191,7 +191,7 @@
     let selectedUser = {
         id: 1,
         name: "Allen Panda",
-        avartar: "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
+        avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
         status: "Online",
         messageGroup: [
                 {
@@ -203,7 +203,7 @@
                             user: {
                                 userId: 0,
                                 name: "Me",
-                                avartar:
+                                avatar:
                                     "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp",
                             },
                             message: "Test message from me",
@@ -213,7 +213,7 @@
                             user: {
                                 userId: 1,
                                 name: "Allen Panda",
-                                avartar:
+                                avatar:
                                     "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
                             },
                             message: "Good evening",
@@ -229,7 +229,7 @@
                             user: {
                                 userId: 0,
                                 name: "Me",
-                                avartar:
+                                avatar:
                                     "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp",
                             },
                             message: "How is it going?",
@@ -239,7 +239,7 @@
                             user: {
                                 userId: 1,
                                 name: "Allen Panda",
-                                avartar:
+                                avatar:
                                     "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
                             },
                             message: "Great!",
@@ -255,7 +255,7 @@
                             user: {
                                 userId: 1,
                                 name: "Allen Panda",
-                                avartar:
+                                avatar:
                                     "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
                             },
                             message: "See u tmr",
@@ -265,7 +265,7 @@
                             user: {
                                 userId: 0,
                                 name: "Me",
-                                avartar:
+                                avatar:
                                     "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp",
                             },
                             message: "See u",
@@ -281,7 +281,7 @@
                             user: {
                                 userId: 1,
                                 name: "Allen Panda",
-                                avartar:
+                                avatar:
                                     "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
                             },
                             message: "where are u?",
@@ -291,7 +291,7 @@
                             user: {
                                 userId: 1,
                                 name: "Allen Panda",
-                                avartar:
+                                avatar:
                                     "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
                             },
                             message: "I just arrived",
@@ -301,7 +301,7 @@
                             user: {
                                 userId: 0,
                                 name: "Me",
-                                avartar:
+                                avatar:
                                     "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp",
                             },
                             message: "On the bus, coming",

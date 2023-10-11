@@ -14,24 +14,23 @@
     export let targetUser = {
         id: 1,
         name: "Allen Panda",
-        avartar: "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
+        avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
         status: "Online",
         messageGroup: [],
     };
 
     onMount(async () => {
-        Pusher.logToConsole = true;
-        // Fetch Pusher configuration from the backend
-        const response = await fetch(pusherCfgUrl);
-        const config = await response.json();
-        pusher = new Pusher(config.key, 
-        // pusher key
-        {
-            cluster: config.cluster,
-            // authEndpoint: '/pusher/auth'
-        });
+        // Pusher.logToConsole = true;
+        // // Fetch Pusher configuration from the backend
+        // const response = await fetch(pusherCfgUrl);
+        // const config = await response.json();
+        // pusher = new Pusher(config.key, 
+        // // pusher key
+        // {
+        //     cluster: config.cluster,
+        //     // authEndpoint: '/pusher/auth'
+        // });
         
-        console.log('test');
         scrollToBottom();
     });
 
@@ -60,7 +59,7 @@
                             user: {
                                 userId: 0,
                                 name: "Me",
-                                avartar:
+                                avatar:
                                     "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp",
                             },
                             message: content,
@@ -77,7 +76,7 @@
                             user: {
                                 userId: 0,
                                 name: "Me",
-                                avartar:
+                                avatar:
                                     "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp",
                             },
                             message: content,
@@ -100,7 +99,7 @@
                             user: {
                                 userId: 0,
                                 name: "Me",
-                                avartar:
+                                avatar:
                                     "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp",
                             },
                             message: content,
@@ -159,8 +158,8 @@
         <div class="flex-shrink-0">
             <img
                 class="rounded-circle"
-                src={targetUser.avartar
-                    ? targetUser.avartar
+                src={targetUser.avatar
+                    ? targetUser.avatar
                     : "./icons8-user-96.png"}
                 alt="avatar"
                 width="60px"
@@ -189,8 +188,8 @@
                             >
                                 <img
                                     class="rounded-circle"
-                                    src={message.user.avartar
-                                        ? message.user.avartar
+                                    src={message.user.avatar
+                                        ? message.user.avatar
                                         : "./icons8-user-96.png"}
                                     alt="avatar"
                                     width="50px"

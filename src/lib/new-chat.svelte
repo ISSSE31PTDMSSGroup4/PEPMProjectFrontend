@@ -1,20 +1,29 @@
 <script>  
     import Sendbox from "./sendbox.svelte";   
     import { createEventDispatcher } from "svelte";
+    import { onMount, onDestroy, afterUpdate } from "svelte";
+    import { userProfilesUrl } from "../routes/constants";
+
     const dispatch = createEventDispatcher();
 
     let newUserEmail = '';
-    let liveSearchUsers = [
-        { id: 7, email: "te@wohkajok.nu" },
-        { id: 10, email: "bedsehab@ponmad.gs" },
-        { id: 6, email: "tavel@azumu.ws" },
-        { id: 64, email: "cigjofhug@we.mx" },
-        { id: 13, email: "pizhihgeg@cofigule.er" },
-        { id: 68, email: "bipuc@siufo.ly" },
-        { id: 58, email: "curzub@vatunil.mr" },
-        { id: 9, email: "si@feovlin.uk" },
-        { id: 88, email: "imiiko@gewat.uy" },
-    ];
+    let liveSearchUsers = [];
+    onMount(async () => {
+        await fetchAllUserData();
+    });
+
+    async function fetchAllUserData() {
+        const response = await fetch(userProfilesUrl);
+        if (response.ok) {
+            const data = await response.json();
+            console.log("liveSearchUsers", data);
+            liveSearchUsers = data;
+            return data;
+        } else {
+            const text = await response.text();
+            throw new Error(text);
+        }
+    }
 
     const sendMessage = (e) => {
         if(!newUserEmail){ return; }
@@ -22,7 +31,7 @@
         var newUser = {
             id: Math.random(100,1000),
             name: newUserEmail,
-            avartar: undefined,
+            avatar: undefined,
             unread: 0,
             status: "Offline",
             messageGroup: [
@@ -35,7 +44,7 @@
                             user: {
                                 userId: 0,
                                 name: "Me",
-                                avartar:
+                                avatar:
                                     "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp",
                             },
                             message: msg,
@@ -59,8 +68,8 @@
     />
 
     <datalist id="datalistOptions">
-        {#each liveSearchUsers as user (user.id)}
-            <option value={user.email} />
+        {#each liveSearchUsers as user (user._id.$oid)}
+            <option value={user.name} />
         {/each}
     </datalist>
 </div>

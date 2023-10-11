@@ -10,7 +10,9 @@ const loginServiceBaseUrl = "http://localhost:5000";
 const userServiceBaseUrl = "http://localhost:8001";
 
 export const userProfileUrl = userServiceBaseUrl + "/user/profile";
+export const updateUserProfileUrl = userServiceBaseUrl + "/user/profile/update";
 export const userProfilesUrl = userServiceBaseUrl + "/user/profiles";
+export const uploadAvatar = userServiceBaseUrl + "/user/profile/avatar/upload";
 
 export const getUserQuizListUrl = baseApiUrl + "/quiz/list";
 export const getQuizDetailUrl = baseApiUrl + "/quiz/detail";

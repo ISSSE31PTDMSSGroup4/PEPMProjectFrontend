@@ -30,7 +30,7 @@
                         >
                             <!-- svelte-ignore a11y-img-redundant-alt -->
                             <img
-                                src={profileData.avartar}
+                                src={profileData.avatar}
                                 alt="Generic placeholder image"
                                 class="img-fluid img-thumbnail mt-4 mb-2"
                                 style="width: 150px; z-index: 1"

@@ -9,7 +9,7 @@
   //export let color= "black";
   const logoutHandle = () => {
         user.set(undefined);
-        location.replace(routeLogin);
+        location.replace(routeLogout);
     };
 </script>
 {#if $user}
@@ -24,7 +24,7 @@
       </div>
       <div class="col">
         <a class="dropdown-toggle" href={routeRoot} data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-          <img src={$user.avartar} class="rounded-circle" style="width: {width}; size:{size}; width:{width};height:{height};" alt="Avartar" />
+          <img src={$user.avatar} class="rounded-circle" style="width: {width}; size:{size}; width:{width};height:{height};" alt="Avatar" />
         </a>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink" >
           <a class = "dropdown-item" href={routeProfile}>Profile</a>

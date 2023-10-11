@@ -69,8 +69,8 @@
                 >
                     <div class="col-2">
                         <img
-                            src={user.avartar
-                                ? user.avartar
+                            src={user.avatar
+                                ? user.avatar
                                 : "./icons8-user-96.png"}
                             class="rounded-circle"
                             style="width: {width}; size:{size}; width:{width};height:{height};"

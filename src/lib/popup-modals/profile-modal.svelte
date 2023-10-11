@@ -4,17 +4,16 @@
     import Modal from "./base-modal.svelte";
     import {
         userProfileUrl,
+        updateUserProfileUrl,
         routeLogin,
     } from "../../routes/constants";
     export let mode = "edit";
     export let profileData = {
-        id: -1,
         name: "",
-        avartar: "",
+        avatar: "",
         email: "",
         about: "",
     };
-    const url = userProfileUrl;
     let formTitle = mode === "edit" ? "Edit" : "Create";
     let showModal = false;
     let modalObj;
@@ -22,18 +21,16 @@
     let buttoneText = mode === "edit" ? "Save Changes" : "Submit";
     let fileinput;
     onMount(() => {
-      if($user && mode !== 'edit'){
-        profileData.email == $user.email;
-      }
+        
     });
     const onFileSelected = (e) => {
         let image = e.target.files[0];
         let reader = new FileReader();
         reader.readAsDataURL(image);
         reader.onload = (e) => {
-            profileData.avartar = e.target.result;
-            $user.avartar =  e.target.result;
-            //TODO: Call API to upload the avartar file
+            profileData.avatar = e.target.result;
+            $user.avatar =  e.target.result;
+            //TODO: Call API to upload the avatar file
         };
     };
 
@@ -47,54 +44,68 @@
     };
 
     const submitHandler = async () => {
+        //Temp Hardcode
+        profileData.avatar = "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp";
         if(!validateBfSubmit()){
-            alert("Please input valid name.");
             return;
         }
         await triggerUserProfile();
     };
 
     const validateBfSubmit = () => {
-        if(profileData.email == ''){return false;}
-        if(profileData.name == ''){return false;}
+        console.log(profileData);
+        if(profileData.email === ''){
+            alert("Please input valid email.");
+            return false;
+        }
+        if(profileData.name === ''){
+            alert("Please input valid name.");
+            return false;
+        }
+        if(profileData.avatar === ''){
+            alert("Please upload avatar before submit.");
+            return false;
+        }
+        return true;
     };
 
     async function triggerUserProfile() {
         processing = true;
+        
+        let url = updateUserProfileUrl;
         let method = "PUT";
         let reqBody = {
             id: profileData.id,
             name: profileData.name,
-            // avartar: profileData.avartar,
+            avatar: profileData.avatar,
             email: profileData.email,
             about: profileData.about,
         };
         if (mode === "create") {
+            url = userProfileUrl;
             method = "POST";
             reqBody = {
                 name: profileData.name,
-                // avartar: profileData.avartar,
+                avatar: profileData.avatar,
                 email: profileData.email,
                 about: profileData.about,
             };
         }
-
+        console.log("reqbody", JSON.stringify(reqBody));
         const response = await fetch(url, {
             method: method,
+            mode: "cors",
+            credentials: "include",
             headers: {
                 "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*",
+                "X-USER": profileData.email
             },
             body: JSON.stringify(reqBody),
         });
         if (response.ok) {
             const data = await response.json();
-            console.log("userProfileData", data);
-            let currUser = $user;
-            currUser.name = reqBody.name;
-            currUser.email = reqBody.email;
-            currUser.about = reqBody.about;
-            user.set(currUser);
+            console.log("submitted data", data);
+            user.set(data);
             processing = false;
             closeHandler();
             return;
@@ -123,9 +134,9 @@
                         <img
                             class="rounded-circle mt-5"
                             width="150px"
-                            src={profileData.avartar &&
-                            profileData.avartar != ""
-                                ? profileData.avartar
+                            src={profileData.avatar &&
+                            profileData.avatar != ""
+                                ? profileData.avatar
                                 : "./icons8-user-96.png"}
                             alt=""
                         />
@@ -138,7 +149,7 @@
                                     fileinput.click();
                                 }}
                             >
-                                Upload Avartar
+                                Upload Avatar
                             </button>
                             <input
                                 style="display:none"
@@ -155,7 +166,7 @@
                         <div
                             class="d-flex justify-content-between align-items-center mb-3"
                         >
-                            <h4 class="text-right">Profile Settings</h4>
+                            <h4 class="text-right">Profile Information</h4>
                         </div>                        
                         <div class="row mt-3">
                             <div class="col-md-12">
@@ -176,7 +187,7 @@
                                 <label class="labels">Nickname</label><input
                                     type="text"
                                     class="form-control"
-                                    placeholder="nick name"
+                                    placeholder="Your name"
                                     bind:value={profileData.name}
                                 />
                             </div>
