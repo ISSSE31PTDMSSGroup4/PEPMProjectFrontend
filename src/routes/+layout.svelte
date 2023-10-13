@@ -28,7 +28,10 @@
   }
   
   // Call the monkeyPatchFetch function to apply the monkey patch
-  monkeyPatchFetch();
+
+  onMount(()=>{
+    monkeyPatchFetch();
+  });
 
 
   let profileModalObj;
