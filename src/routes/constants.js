@@ -8,26 +8,32 @@ const baseApiUrl = "https://issse31ptdmss.xyz/api";
 const chatServiceBaseUrl = "http://localhost:8000/api";
 const loginServiceBaseUrl = "http://localhost:5000";
 const userServiceBaseUrl = "http://localhost:8001";
+const quizServiceBaseUrl = "http://localhost:5050";
 
-export const userProfileUrl = baseApiUrl + "/user/profile";
-export const updateUserProfileUrl = baseApiUrl + "/user/profile/update";
-export const userProfilesUrl = baseApiUrl + "/user/profiles";
-export const uploadAvatar = baseApiUrl + "/user/profile/avatar/upload";
-
+//user profile microservice
+export const userProfileUrl = userServiceBaseUrl + "/user/profile";
+export const updateUserProfileUrl = userServiceBaseUrl + "/user/profile/update";
+export const userProfilesUrl = userServiceBaseUrl + "/user/profiles";
+export const uploadAvatar = userServiceBaseUrl + "/user/profile/avatar/upload";
+//quiz microservice
 export const getUserQuizListUrl = baseApiUrl + "/quiz/list";
 export const getQuizDetailUrl = baseApiUrl + "/quiz/detail";
 export const quizUrl = baseApiUrl + "/quiz";
 export const questionUrl = baseApiUrl + "/quiz/question";
-
+//chat microservice
 export const pusherCfgUrl = baseApiUrl + "/pusher_config";
 export const pusherMessageUrl = baseApiUrl + "/message";
-
+//route
 export const routeRoot = base + "/";
 export const routeQuiz = base +"/quiz";
 export const routeProfile = base +"/profile";
 export const routeAbout = base +"/about";
+//login microservice
 export const routeLogin = baseApiUrl + "/auth/initiate_auth";
 export const routeLogout = baseApiUrl + "/auth/logout";
 
+//Other constants
 export const viewMode = 1;
 export const editMode = 2;
+export const quizMsgPrefix = "##@@$$";
+export const quizMsgSuffix = "**&&^^";

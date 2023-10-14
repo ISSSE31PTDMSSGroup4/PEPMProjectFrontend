@@ -7,6 +7,8 @@
     import {
         questionUrl,
     } from "../../routes/constants.js";
+    import { xUser } from "../../routes/store";
+    
     export let quizId = "";
     export let index = "";
     const dispatch = createEventDispatcher();
@@ -48,8 +50,7 @@
         const response = await fetch(questionReqUrl, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*",
+                "X-USER": $xUser,
             },
             body: JSON.stringify(reqBody),
         });

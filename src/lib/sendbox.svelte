@@ -1,5 +1,8 @@
 <script>
     import { createEventDispatcher } from "svelte";
+    import { Share } from "svelte-bootstrap-icons";
+    import Spinner from "./spinner.svelte";
+    import { quizzes } from "../routes/store";
     const dispatch = createEventDispatcher();
     const sendMessage = (content) => {
         if (!content || content === "") {
@@ -12,6 +15,15 @@
     };
 
     let message = "";
+
+    let drawer;
+	
+	const openDrawer = ()=>{
+
+		drawer.addEventListener('sl-hide', (event) => console.log('hide'));
+		drawer.show();
+
+	};
 </script>
 
 <div class="send-box">
@@ -23,21 +35,43 @@
             placeholder="Write message…"
             bind:value={message}
         />
-
-        <button type="button" on:click={sendMessage(message)}
+        <button class="share-quiz nav-link py-3 border-bottom" on:click={openDrawer}>
+            <Share height="24px" width="24px" color="primary"/>
+        </button>
+        <button class="send-button" type="button" on:click={sendMessage(message)}
             ><i
                 class="fa fa-paper-plane"
                 aria-hidden="true"
                 
             /> Send</button
         >
-    </form>
+    </form>   
 </div>
+<sl-drawer placement="bottom" label="Select Quiz" contained class="drawer-contained" bind:this={drawer}>
+    <div class="quiz-list-block">
+        <div class="list-group">
+            {#if $quizzes && $quizzes.length > 0}
+                {#each $quizzes as quiz}
+                    <button
+                        class="list-group-item list-group-item-action d-flex justify-content-start align-items-center">
+                        <div class="col-12">
+                            <h5>{quiz.title}</h5>
+                            <p>{quiz.remark}</p>
+                        </div>
+                    </button>
+                {/each}
+            {:else}
+                <h6>You don't have any quizzes right now, Please create a new quiz before sharing to other</h6> 
+            {/if}
+            
+        </div>	
+</sl-drawer>
 
 <style>
     .send-box {
         padding: 15px;
         border-top: 1px solid #ccc;
+        position: relative
     }
 
     .send-box form {
@@ -65,7 +99,7 @@
         transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     }
 
-    .send-box button {
+    .send-box .send-button {
         border: none;
         background: #3867d6;
         padding: 0.375rem 5px;
@@ -73,55 +107,32 @@
         border-radius: 0.25rem;
         font-size: 14px;
         font-weight: 400;
-        width: 24%;
+        width: 15%;
         margin-left: 1%;
     }
 
-    .send-box button i {
-        margin-right: 5px;
-    }
-
-    .send-btns .button-wrapper {
-        position: relative;
-        width: 125px;
-        height: auto;
-        text-align: left;
-        margin: 0 auto;
-        display: block;
-        background: #f6f7fa;
-        border-radius: 3px;
-        padding: 5px 15px;
-        float: left;
-        margin-right: 5px;
-        margin-bottom: 5px;
-        overflow: hidden;
-    }
-
-    .send-btns .button-wrapper span.label {
-        position: relative;
-        z-index: 1;
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        -webkit-box-align: center;
+    .share-quiz{
+        width: 5%;
         -ms-flex-align: center;
-        align-items: center;
-        width: 100%;
-        cursor: pointer;
-        color: #343945;
-        font-weight: 400;
-        text-transform: capitalize;
-        font-size: 13px;
+        margin-left: 1rem;
+    }
+
+    .send-box .send-button i {
+        margin-right: 5px;
     }
 
     button:focus {
         outline: 0;
     }
 
-    .send-box button {
+    .send-box .send-button {
         width: 28%;
     }
     .send-box .form-control {
         width: 70%;
     }
 </style>
+<svelte:head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.34/dist/themes/base.css">
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.0.0-beta.34/dist/shoelace.js"></script>
+</svelte:head>

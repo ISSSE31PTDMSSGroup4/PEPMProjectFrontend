@@ -2,7 +2,7 @@
     import { createEventDispatcher } from "svelte";
     import PersonAdd from "svelte-bootstrap-icons/lib/PersonFillAdd.svelte";
     import PersonRemove from "svelte-bootstrap-icons/lib/PersonFillDash.svelte";
-
+    import { quizAnswering } from "../routes/store";
     const dispatch = createEventDispatcher();
     export let size = "2em"; // string | number
     export let width = size; // string | number
@@ -14,6 +14,7 @@
         selectedUserId = item.id;
         item.unread = 0;
         dispatch("selectedUser", item);
+        quizAnswering.set(false);
     };
 
     export const handleNewUserClick = () => {
@@ -24,7 +25,7 @@
         };
 
         if (users.findIndex((e) => e.id === -999) != -1) {
-            users = users.filter(x=>x.id > 0);           
+            users = users.filter((x) => x.id > 0);
             handleUserSelect(users[0]);
             return;
         }
@@ -46,9 +47,9 @@
                 data-bs-placement="right"
                 data-bs-original-title="Chat"
             >
-                {#if users.find(obj => obj.id < 0)}
+                {#if users.find((obj) => obj.id < 0)}
                     <PersonRemove {size} {width} {height} {color} />
-                {:else}                
+                {:else}
                     <PersonAdd {size} {width} {height} {color} />
                 {/if}
             </button>

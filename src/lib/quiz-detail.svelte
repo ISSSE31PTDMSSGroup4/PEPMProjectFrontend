@@ -12,7 +12,7 @@
         viewMode,
         editMode,
     } from "../routes/constants.js";
-    import { reloadQuiz } from "../routes/store";
+    import { reloadQuiz, xUser } from "../routes/store";
 
     export let targetQuiz = undefined;
     export let quizDetailMode = viewMode;
@@ -41,7 +41,12 @@
         if (!targetQuiz) {
             return;
         }
-        const response = await fetch(url + "?quiz_id=" + targetQuiz.id);
+        const response = await fetch(url + "?quiz_id=" + targetQuiz.id, {
+            method: "GET",
+            headers: {
+                "X-USER": $xUser,
+            },
+        });
         if (response.ok) {
             currIndex = 1;
             const data = await response.json();

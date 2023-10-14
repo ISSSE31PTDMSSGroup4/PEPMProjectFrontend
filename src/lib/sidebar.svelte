@@ -2,6 +2,7 @@
   import { routeRoot, routeQuiz } from './../routes/constants.js';
   import Bell from "svelte-bootstrap-icons/lib/Bell.svelte";
   import ChatDots from "svelte-bootstrap-icons/lib/ChatDots.svelte";
+  import { quizAnswering } from '../routes/store.js';
 
   //icon options
   export let size = "2em"; // string | number
@@ -11,6 +12,11 @@
 
   let rootUrl = routeRoot;
   let quizUrl = routeQuiz;
+
+  const handleChatClick=()=>{
+     quizAnswering.set(false);
+  }
+
 </script>
 
 <div class="d-flex flex-column flex-shrink-0 bg-light" style="width: 4.5rem;">
@@ -23,6 +29,7 @@
         data-bs-toggle="tooltip"
         data-bs-placement="right"
         data-bs-original-title="Chat"
+        on:click={handleChatClick}
       >
         <ChatDots {size} {width} {height} {color} />
       </a>

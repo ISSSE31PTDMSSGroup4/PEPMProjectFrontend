@@ -12,7 +12,7 @@
         editMode,
     } from "../routes/constants.js";
     import AddQuizModal from "./popup-modals/add-quiz-modal.svelte";
-    import { reloadQuiz } from "../routes/store";
+    import { reloadQuiz, quizzes,xUser } from "../routes/store";
     export let quizDetailMode = viewMode;
 
     const url = getUserQuizListUrl;
@@ -23,7 +23,6 @@
     let height = size; // string | number
     let color = "primary";
     let createQuizModalObj;
-    let quizzes = undefined;
     let selectedId = -1;
 
     onMount(async () => {});
@@ -64,11 +63,16 @@
     };
 
     async function fetchData() {
-        const response = await fetch(url);
+        const response = await fetch(url, {
+            method: "GET",
+            headers: {
+                "X-USER": $xUser,
+            },
+        });
         if (response.ok) {
             const data = await response.json();
             //console.log("quizListData", data);
-            quizzes = data;
+            quizzes.set(data);
             return data;
         } else {
             const text = await response.text();
@@ -115,7 +119,7 @@
             {#await fetchData()}
                 <Spinner size="spinner-grow-sm" />
             {:then data}
-                {#each quizzes as quiz}
+                {#each $quizzes as quiz}
                     <button
                         disabled={quizDetailMode == editMode}
                         class="list-group-item list-group-item-action {quiz.id ===

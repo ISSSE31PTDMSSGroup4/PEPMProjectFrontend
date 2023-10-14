@@ -4,6 +4,7 @@
     import AddQuestion from "../add-question.svelte";
     import Spinner from "../spinner.svelte";
     import { quizUrl } from "../../routes/constants.js";
+    import { xUser } from "../../routes/store";
     import Modal from "./base-modal.svelte";
 
     const dispatch = createEventDispatcher();
@@ -42,8 +43,7 @@
         const response = await fetch(quizReqUrl, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*",
+                "X-USER": $xUser,
             },
             body: JSON.stringify(quiz),
         });

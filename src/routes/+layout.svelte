@@ -4,7 +4,7 @@
   import Spinner from "./../lib/spinner.svelte";
   import Navbar from "../lib/navbar.svelte";
   import Sidebar from "../lib/sidebar.svelte";
-  import { user } from "./store";
+  import { user,xUser } from "./store";
   import { userProfileUrl } from "./constants.js";
   import ProfileModal from "../lib/popup-modals/profile-modal.svelte";
   const url = userProfileUrl;
@@ -13,7 +13,6 @@
   let creatingProfile = false;
   let loginState = false;
   let mounting = true;
-  let xUser = "";  
   let errorState = false;
   let profileData = {
     name: "",
@@ -26,7 +25,7 @@
     //check login state first
     loginState = isLoggedIn();
     if (loginState) {
-      xUser = getXUser();
+      xUser.set(getXUser());
       let result = await fetchData();
       if (!$user || !result) {
           errorState = true;
@@ -36,7 +35,7 @@
   });
 
   const creatProfileHandler = () => {
-    profileData.email = xUser;
+    profileData.email = $xUser;
     profileModalObj.showHandler();
     creatingProfile = true;
   };
@@ -74,13 +73,13 @@
     const response = await fetch(url, {
       method: "GET",
       headers: {
-        "X-USER": xUser,
+        "X-USER": $xUser,
       },
     });
     if (response.ok) {
       const data = await response.json();
       console.log("userProfileData");
-      if (data.email === "") {
+      if (!data || data.email === "") {
         creatProfileHandler();
       } else {
         user.set(data);
@@ -89,7 +88,7 @@
     } else {
       const text = await response.text();
       console.log(text);
-      creatProfileHandler();
+      //creatProfileHandler();
       return false;
     }
   }
