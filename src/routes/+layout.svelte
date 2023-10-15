@@ -4,8 +4,9 @@
   import Spinner from "./../lib/spinner.svelte";
   import Navbar from "../lib/navbar.svelte";
   import Sidebar from "../lib/sidebar.svelte";
-  import { user,xUser } from "./store";
-  import { userProfileUrl } from "./constants.js";
+  import { user, xUser, pusher } from "./store";
+  import { quizUrl, userProfileUrl, pusherCfgUrl } from "./constants.js";
+  import Pusher from "pusher-js";
   import ProfileModal from "../lib/popup-modals/profile-modal.svelte";
   const url = userProfileUrl;
 
@@ -13,26 +14,51 @@
   function monkeyPatchFetch() {
     // Store the original fetch function
     const originalFetch = window.fetch;
-  
+
     // Define a new fetch function with the desired behavior
-    window.fetch = function(url, options) {
+    window.fetch = function (url, options) {
       // Check if the URL has a trailing slash and query parameters
-      if (!url.includes('?') && !url.endsWith('/')) {
-        url += '/';
+      if (url.includes('quiz') && !url.includes("?") && !url.endsWith("/")) {
+        url += "/";
       }
-  
+
       // Call the original fetch function with the modified URL
       return originalFetch.call(window, url, options);
     };
-  
   }
-  
+
+  async function initPusher() {
+    Pusher.logToConsole = true;
+    // Fetch Pusher configuration from the backend
+    console.log(pusherCfgUrl);
+    const response = await fetch(pusherCfgUrl, {
+      method: "GET",
+      // headers: {
+      //   "X-USER": $xUser,
+      // },
+    });
+    if (response.ok) {
+      const config = await response.json();
+      p = new Pusher(
+        config.key,
+        // pusher key
+        {
+          cluster: config.cluster,
+          // authEndpoint: '/pusher/auth'
+        }
+      );
+      pusher.set(p);
+      console.log("Pusher init success");
+    } else {
+      pusher.set(undefined);
+    }
+  }
   // Call the monkeyPatchFetch function to apply the monkey patch
 
-  onMount(()=>{
+  onMount(() => {
     monkeyPatchFetch();
+    initPusher();
   });
-
 
   let profileModalObj;
   let creatingProfile = false;
@@ -45,7 +71,7 @@
     email: "",
     about: "",
   };
-  
+
   onMount(async () => {
     //check login state first
     loginState = isLoggedIn();
@@ -53,7 +79,7 @@
       xUser.set(getXUser());
       let result = await fetchData();
       if (!$user || !result) {
-          errorState = true;
+        errorState = true;
       }
     }
     mounting = false;

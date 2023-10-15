@@ -11,18 +11,18 @@ const userServiceBaseUrl = "http://localhost:8001";
 const quizServiceBaseUrl = "http://localhost:5050";
 
 //user profile microservice
-export const userProfileUrl = baseApiUrl + "/user/profile";
-export const updateUserProfileUrl = baseApiUrl + "/user/profile/update";
-export const userProfilesUrl = baseApiUrl + "/user/profiles";
-export const uploadAvatar = baseApiUrl + "/user/profile/avatar/upload";
+export const userProfileUrl = userServiceBaseUrl + "/user/profile";
+export const updateUserProfileUrl = userServiceBaseUrl + "/user/profile/update";
+export const userProfilesUrl = userServiceBaseUrl + "/user/profiles";
+export const uploadAvatar = userServiceBaseUrl + "/user/profile/avatar/upload";
 //quiz microservice
-export const getUserQuizListUrl = baseApiUrl + "/quiz/list";
-export const getQuizDetailUrl = baseApiUrl + "/quiz/detail";
-export const quizUrl = baseApiUrl + "/quiz";
-export const questionUrl = baseApiUrl + "/quiz/question";
+export const getUserQuizListUrl = quizServiceBaseUrl + "/quiz/list";
+export const getQuizDetailUrl = quizServiceBaseUrl + "/quiz/detail";
+export const quizUrl = quizServiceBaseUrl + "/quiz";
+export const questionUrl = quizServiceBaseUrl + "/quiz/question";
 //chat microservice
-export const pusherCfgUrl = baseApiUrl + "/pusher_config";
-export const pusherMessageUrl = baseApiUrl + "/message";
+export const pusherCfgUrl = chatServiceBaseUrl + "/pusher_config";
+export const pusherMessageUrl = chatServiceBaseUrl + "/message";
 //route
 export const routeRoot = base + "/";
 export const routeQuiz = base +"/quiz";

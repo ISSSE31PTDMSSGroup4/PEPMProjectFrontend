@@ -35,7 +35,55 @@
     };
 
     const submitHandler = async () => {
+        if (!validateBfSubmit()) {
+            return;
+        }
         await addQuiz();
+    };
+
+    const validateBfSubmit = () => {
+        console.log(quiz);
+        if (quiz.title === "") {
+            alert("Please input valid quiz title.");
+            return false;
+        }
+        if (quiz.remark === "") {
+            alert("Please input valid quiz subtitle.");
+            return false;
+        }
+        if (!quiz.questions) {
+            alert("Please input valid init question.");
+            return false;
+        }
+        
+        let validQuestions =  false;
+        quiz.questions.forEach((question) => {
+            if (question.title === "") {
+                alert("Please input valid question title.");
+                return false;
+            }
+            if (new Set(question.options).size !== question.options.length){
+                alert("Duplicate options, please make sure the option contents are difference.");
+                return false;
+            }
+            if (question.answer === "" || !question.options.includes(question.answer)) {
+                alert(
+                    "Please input valid anwser and the anwser must from the options"
+                );
+                return false;
+            }
+            if (question.explanation === "") {
+                alert("Please input valid explanation");
+                return false;
+            }
+            validQuestions = true;
+            return true;
+        });
+        console.log(validQuestions);
+        if(!validQuestions){
+            return false;
+        }
+        return true;
     };
 
     async function addQuiz() {
@@ -97,10 +145,8 @@
         <AddQuestion question={quiz.questions[0]} />
     </div>
     <div slot="footer" class="d-flex flex-row justify-content-end">
-        <button
-            type="button"
-            class="btn btn-secondary"
-            on:click={closeHandler}>Close</button
+        <button type="button" class="btn btn-secondary" on:click={closeHandler}
+            >Close</button
         >
         <button
             type="button"

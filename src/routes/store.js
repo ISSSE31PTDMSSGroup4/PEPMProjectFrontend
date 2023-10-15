@@ -1,5 +1,7 @@
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
+import Pusher from "pusher-js";
+
 const initUser = browser && window.localStorage.user &&  window.localStorage.user !== "undefined" ? JSON.parse(window.localStorage.user) : undefined;
 export let user = writable(initUser);
 // export let user = writable({
@@ -22,3 +24,4 @@ export let reloadQuiz = writable({});
 export let quizzes = writable([]);
 export let quizAnswering = writable(false);
 export let xUser = writable("");
+export let pusher = writable(undefined); 

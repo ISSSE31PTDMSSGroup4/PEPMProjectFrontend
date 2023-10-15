@@ -1,10 +1,9 @@
 <script lang="ts">
 	import QuizDetail from './quiz-detail.svelte';
-    import Pusher from "pusher-js";
     import Messages from "./messages.svelte";
     import Sendbox from "./sendbox.svelte";
     import { onMount, onDestroy, afterUpdate } from "svelte";
-    import { pusherCfgUrl, pusherMessageUrl, viewMode, } from "../routes/constants";
+    import { pusherMessageUrl, viewMode, } from "../routes/constants";
     import { user ,quizAnswering} from "../routes/store";
     import { quizMsgPrefix, quizMsgSuffix } from "../routes/constants";
 
@@ -23,16 +22,6 @@
     };
 
     onMount(async () => {
-        // Pusher.logToConsole = true;
-        // // Fetch Pusher configuration from the backend
-        // const response = await fetch(pusherCfgUrl);
-        // const config = await response.json();
-        // pusher = new Pusher(config.key,
-        // // pusher key
-        // {
-        //     cluster: config.cluster,
-        //     // authEndpoint: '/pusher/auth'
-        // });
 
         scrollToBottom();
     });

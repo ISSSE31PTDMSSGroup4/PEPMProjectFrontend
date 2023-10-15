@@ -4,11 +4,9 @@
     import Modal from "./base-modal.svelte";
     import Spinner from "../spinner.svelte";
     import { createEventDispatcher } from "svelte";
-    import {
-        questionUrl,
-    } from "../../routes/constants.js";
+    import { questionUrl } from "../../routes/constants.js";
     import { xUser } from "../../routes/store";
-    
+
     export let quizId = "";
     export let index = "";
     const dispatch = createEventDispatcher();
@@ -33,19 +31,61 @@
     };
 
     const submitHandler = async () => {
+        if (!validateBfSubmit()) {
+            return;
+        }
         await addQuestion();
+    };
+
+    const validateBfSubmit = () => {
+        console.log(question);
+        if (question.title === "") {
+            alert("Please input valid question title.");
+            return false;
+        }
+        if (!question.options) {
+            alert("Please input valid options.");
+            return false;
+        }
+        let validOptions = false;
+        options.forEach((opition) => {
+            if (opition === "") {
+                alert("Please input valid options.");
+                return false;
+            }
+            
+            validOptions = true;
+        });
+        if (new Set(options).size !== options.length){
+            alert("Duplicate options, please make sure the option contents are difference.");
+            return false;
+        }
+
+        if (question.answer === "" || !options.includes(question.answer)) {
+            alert(
+                "Please input valid anwser and the anwser must from the options"
+            );
+            return false;
+        }
+        if (question.explanation === "") {
+            alert(
+                "Please input valid explanation"
+            );
+            return false;
+        }
+        return true;
     };
 
     async function addQuestion() {
         processing = true;
         let reqBody = {
-        quiz_id: quizId,
-        index: index,
-        title: question.title,
-        options: question.options,
-        answer: question.answer,
-        explanation: question.explanation,
-    };
+            quiz_id: quizId,
+            index: index,
+            title: question.title,
+            options: question.options,
+            answer: question.answer,
+            explanation: question.explanation,
+        };
         console.log("request body", reqBody);
         const response = await fetch(questionReqUrl, {
             method: "POST",
@@ -78,10 +118,8 @@
         <AddQuestion {question} />
     </div>
     <div slot="footer" class="d-flex flex-row justify-content-end">
-        <button
-            type="button"
-            class="btn btn-secondary"
-            on:click={closeHandler}>Close</button
+        <button type="button" class="btn btn-secondary" on:click={closeHandler}
+            >Close</button
         >
         <button
             type="button"
