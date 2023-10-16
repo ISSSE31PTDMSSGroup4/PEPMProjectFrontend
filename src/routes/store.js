@@ -1,22 +1,23 @@
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
-import Pusher from "pusher-js";
 
 const initUser = browser && window.localStorage.user &&  window.localStorage.user !== "undefined" ? JSON.parse(window.localStorage.user) : undefined;
 export let user = writable(initUser);
-// export let user = writable({
-//     id: 0,
-//     name: "Mock account",
-//     avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp",
-//     email: "mockaccount@gmail.com",
-//     about: "This is the test profile content \n This is second line content \n This is third line content"
-// });
-
 user.subscribe((value) => {
     if (browser) {       
         if (!value) { window.localStorage.removeItem("user"); }
         console.log("Subscribe user", value);
         window.localStorage.user = JSON.stringify(value);
+    }
+});
+
+const initQuizHistory = browser && window.localStorage.quizHistory && window.localStorage.quizHistory !== "undefined" ? JSON.parse(window.localStorage.quizHistory) : [];
+export let quizHistory = writable(initQuizHistory);
+quizHistory.subscribe((value) => {
+    if (browser) {       
+        if (!value) { window.localStorage.removeItem("quizHistory"); }
+        console.log("Subscribe quiz history", value);
+        window.localStorage.quizHistory = JSON.stringify(value);
     }
 });
 

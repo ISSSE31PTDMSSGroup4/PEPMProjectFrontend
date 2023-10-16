@@ -3,7 +3,7 @@
     import Messages from "./messages.svelte";
     import Sendbox from "./sendbox.svelte";
     import { onMount, onDestroy, afterUpdate } from "svelte";
-    import { pusherMessageUrl, viewMode, } from "../routes/constants";
+    import { pusherMessageUrl, quizMode, viewMode, } from "../routes/constants";
     import { user ,quizAnswering} from "../routes/store";
     import { quizMsgPrefix, quizMsgSuffix } from "../routes/constants";
 
@@ -191,6 +191,7 @@
 {#if $quizAnswering}
     <QuizDetail
         {targetQuiz}
+        quizDetailMode = {quizMode}
     />
 {:else}  
 <div class="modal-dialog-scrollable">

@@ -326,6 +326,10 @@
         //     return data;
         // } else {
         //     const text = await response.text();
+        // if (text.includes("403")) {
+        //         user.set(undefined);
+        //         location.replace(routeLogout);
+        //     }
         //     throw new Error(text);
         // }
     }

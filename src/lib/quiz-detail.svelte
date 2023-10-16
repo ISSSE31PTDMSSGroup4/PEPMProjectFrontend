@@ -1,4 +1,5 @@
 <script>
+    import { quizAnswering } from "./../routes/store.js";
     import NodePlus from "svelte-bootstrap-icons/lib/NodePlus.svelte";
     import Trash from "svelte-bootstrap-icons/lib/Trash.svelte";
     import { onMount, onDestroy, afterUpdate } from "svelte";
@@ -11,8 +12,9 @@
         questionUrl,
         viewMode,
         editMode,
+        quizMode,
     } from "../routes/constants.js";
-    import { reloadQuiz, xUser } from "../routes/store";
+    import { reloadQuiz, xUser, quizHistory } from "../routes/store";
 
     export let targetQuiz = undefined;
     export let quizDetailMode = viewMode;
@@ -50,13 +52,27 @@
         if (response.ok) {
             currIndex = 1;
             const data = await response.json();
+            console.log("quiz detail", data);
             quizDetail = data;
             question = quizDetail?.questions?.find((x) => x.index == currIndex);
+            getLastAnswer();
             return data;
         } else {
             const text = await response.text();
+            if (unauthorizeHandler(text)) {
+                return;
+            }
             throw new Error(text);
         }
+    }
+
+    function unauthorizeHandler(text) {
+        if (text.includes("403")) {
+            user.set(undefined);
+            location.replace(routeLogout);
+            return true;
+        }
+        return false;
     }
 
     const handleNextClick = (e) => {
@@ -65,6 +81,7 @@
         }
         currIndex++;
         question = quizDetail?.questions?.find((x) => x.index == currIndex);
+        getLastAnswer();
     };
 
     const handlePreviousClick = (e) => {
@@ -73,6 +90,34 @@
         }
         currIndex--;
         question = quizDetail?.questions?.find((x) => x.index == currIndex);
+        getLastAnswer();
+    };
+
+    function getLastAnswer() {
+        if (quizDetailMode != quizMode) {
+            selectedOption = "";
+            return;
+        }
+
+        let historyObj = $quizHistory.find(
+            (x) => x.quiz_id == quizDetail.quiz_id
+        );
+        if (!historyObj) {
+            selectedOption = "";
+            return;
+        }
+        let historyQuestionObj = historyObj.questions.find(
+            (x) => x.index == currIndex
+        );
+        if (!historyQuestionObj) {
+            selectedOption = "";
+            return;
+        }
+        selectedOption = historyQuestionObj.answer;
+    }
+
+    const handleBackToChat = (e) => {
+        quizAnswering.set(false);
     };
 
     const handleApplyChangesClick = (e) => {
@@ -101,7 +146,7 @@
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*",
+                "X-USER": $xUser,
             },
             body: JSON.stringify(quizDetail),
         });
@@ -111,18 +156,21 @@
             reloadTrigger = {};
         } else {
             const text = await response.text();
+            if (unauthorizeHandler(text)) {
+                return;
+            }
             alert(text);
         }
         editQuizProcessing = false;
     }
 
     async function removeQuiz() {
-        removeQuizProcessing = true; 
+        removeQuizProcessing = true;
         const response = await fetch(quizReqUrl, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*",
+                "X-USER": $xUser,
             },
             body: JSON.stringify({
                 quiz_id: quizDetail.id,
@@ -132,12 +180,15 @@
             const data = await response.json();
             console.log("request success", data);
             removeQuizModal.closeHandler();
-            removeQuizProcessing = false;       
+            removeQuizProcessing = false;
             reloadQuiz.set({});
         } else {
             const text = await response.text();
-            alert(text);
             removeQuizProcessing = false;
+            if (unauthorizeHandler(text)) {
+                return;
+            }
+            alert(text);
         }
     }
 
@@ -147,7 +198,7 @@
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
-                "Access-Control-Allow-Origin": "*",
+                "X-USER": $xUser,
             },
             body: JSON.stringify({
                 quiz_id: quizDetail.id,
@@ -163,8 +214,56 @@
             reloadTrigger = {};
         } else {
             const text = await response.text();
-            alert(text);
             removeQuestionProcessing = false;
+            if (unauthorizeHandler(text)) {
+                return;
+            }
+            alert(text);
+        }
+    }
+
+    $: {
+        if (quizDetailMode == quizMode && quizDetail) {
+            console.log("selectOption ->", selectedOption);
+            if (selectedOption && selectedOption != "") {
+                let newRecord = false;
+                let historyObj = $quizHistory.find(
+                    (x) => x.quiz_id == quizDetail.quiz_id
+                );
+                if (historyObj) {
+                } else {
+                    newRecord = true;
+                    historyObj = {
+                        quiz_id: quizDetail.quiz_id,
+                        submitted: false,
+                        questions: [],
+                    };
+                }
+
+                let questionHistoryObj = historyObj.questions.find(
+                    (x) => x.index == currIndex
+                );
+                if (questionHistoryObj) {
+                    questionHistoryObj.answer = selectedOption;
+                    console.log("update answer", questionHistoryObj);
+                    historyObj.questions[
+                        historyObj.questions.indexOf(questionHistoryObj)
+                    ] = questionHistoryObj;
+                } else {
+                    questionHistoryObj = {
+                        index: currIndex,
+                        answer: selectedOption,
+                    };
+                    historyObj.questions = [
+                        ...historyObj.questions,
+                        questionHistoryObj,
+                    ];
+                }
+
+                if (newRecord) {
+                    $quizHistory = [$quizHistory, historyObj];
+                }
+            }
         }
     }
 </script>
@@ -254,11 +353,11 @@
                                     <input
                                         type="text"
                                         class="form-control"
-                                        bind:value={question.title}
+                                        bind:value={question.question}
                                     />
                                 {:else}
                                     <h5 class="mt-1 ml-2">
-                                        {question?.title}
+                                        {question?.question}
                                     </h5>
                                 {/if}
                             </div>
@@ -285,54 +384,69 @@
                                 </div>
                             {/each}
                         </div>
-                        <div class="p-3 bg-white">
-                            <div class="d-flex flex-row align-items-center">
-                                <h5 style="margin-right: 1rem;">Answer:</h5>
-                                {#if quizDetailMode == editMode}
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        bind:value={question.answer}
-                                        style="margin-bottom: 1rem;"
-                                    />
-                                {:else}
-                                    <h5 class="text-secondary">
-                                        {question?.answer}
+                        {#if quizDetailMode != quizMode}
+                            <div class="p-3 bg-white">
+                                <div class="d-flex flex-row align-items-center">
+                                    <h5 style="margin-right: 1rem;">Answer:</h5>
+                                    {#if quizDetailMode == editMode}
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            bind:value={question.answer}
+                                            style="margin-bottom: 1rem;"
+                                        />
+                                    {:else if quizDetailMode == viewMode}
+                                        <h5 class="text-secondary">
+                                            {question?.answer}
+                                        </h5>
+                                    {/if}
+                                </div>
+                                <div class="d-flex flex-row align-items-center">
+                                    <h5 style="margin-right: 1rem;">
+                                        Expanation:
                                     </h5>
-                                {/if}
+                                    {#if quizDetailMode == editMode}
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            bind:value={question.explanation}
+                                        />
+                                    {:else if quizDetailMode == viewMode}
+                                        <span class="text-secondary">
+                                            {question?.explanation}
+                                        </span>
+                                    {/if}
+                                </div>
                             </div>
-                            <div class="d-flex flex-row align-items-center">
-                                <h5 style="margin-right: 1rem;">Expanation:</h5>
-                                {#if quizDetailMode == editMode}
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        bind:value={question.explanation}
-                                    />
-                                {:else}
-                                    <span class="text-secondary">
-                                        {question?.explanation}
-                                    </span>
-                                {/if}
-                            </div>
-                        </div>
+                        {/if}
                         <div
                             class="d-flex flex-row justify-content-between align-items-center p-3 bg-white"
                         >
-                            <button
-                                class="btn btn-primary d-flex align-items-center btn-danger"
-                                type="button"
-                                style="visibility: {currIndex <= 1
-                                    ? 'hidden'
-                                    : 'visible'};"
-                                on:click={handlePreviousClick}
-                                ><i
-                                    class="fa fa-angle-left mt-1 mr-1"
-                                />Previous</button
-                            >
+                            {#if currIndex <= 1 && quizDetailMode == quizMode}
+                                <button
+                                    class="btn btn-secondary d-flex align-items-center"
+                                    type="button"
+                                    on:click={handleBackToChat}
+                                    ><i
+                                        class="fa fa-angle-left mt-1 mr-1"
+                                    />Back to Chat</button
+                                >
+                            {:else}
+                                <button
+                                    class="btn d-flex align-items-center btn-danger"
+                                    type="button"
+                                    style="visibility: {currIndex <= 1
+                                        ? 'collapse'
+                                        : 'visible'};"
+                                    on:click={handlePreviousClick}
+                                    ><i
+                                        class="fa fa-angle-left mt-1 mr-1"
+                                    />Previous</button
+                                >
+                            {/if}
                             {#if currIndex >= quizDetail?.questions.length && quizDetailMode == editMode}
                                 <button
-                                    class="btn btn-primary border-primary align-items-center btn-primary"
+                                    class="btn border-primary align-items-center btn-primary"
                                     type="button"
                                     disabled={editQuizProcessing}
                                     on:click={handleApplyChangesClick}
@@ -346,9 +460,16 @@
                                         Apply Changes
                                     {/if}
                                 </button>
+                            {:else if currIndex >= quizDetail?.questions.length && quizDetailMode == quizMode}
+                                <button
+                                    class="btn btn-primary border-primary align-items-center"
+                                    type="button"
+                                >
+                                    Submit Quiz
+                                </button>
                             {:else}
                                 <button
-                                    class="btn btn-primary border-success align-items-center btn-success"
+                                    class="btn border-success align-items-center btn-success"
                                     type="button"
                                     style="visibility: {currIndex >=
                                     quizDetail?.questions.length

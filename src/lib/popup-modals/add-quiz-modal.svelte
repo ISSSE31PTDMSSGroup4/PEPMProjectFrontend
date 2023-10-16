@@ -103,8 +103,13 @@
             closeHandler();
         } else {
             const text = await response.text();
-            alert(text);
+            
             processing = false;
+            if (text.includes("403")) {
+                user.set(undefined);
+                location.replace(routeLogout);
+            }
+            alert(text);
         }
     }
 </script>

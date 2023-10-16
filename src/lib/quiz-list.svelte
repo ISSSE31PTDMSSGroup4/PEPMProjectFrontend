@@ -12,7 +12,7 @@
         editMode,
     } from "../routes/constants.js";
     import AddQuizModal from "./popup-modals/add-quiz-modal.svelte";
-    import { reloadQuiz, quizzes,xUser } from "../routes/store";
+    import { reloadQuiz, quizzes, xUser } from "../routes/store";
     export let quizDetailMode = viewMode;
 
     const url = getUserQuizListUrl;
@@ -30,10 +30,11 @@
     onDestroy(() => {});
 
     export const handleQuizSelect = (item) => {
-        if (selectedId == item.id) {
+        if (selectedId == item.quiz_id) {
             return;
         }
-        selectedId = item.id;
+        console.log(item.quiz_id);
+        selectedId = item.quiz_id;
         dispatch("selectedQuiz", item);
     };
 
@@ -71,11 +72,15 @@
         });
         if (response.ok) {
             const data = await response.json();
-            //console.log("quizListData", data);
+            console.log("quizListData", data);
             quizzes.set(data);
             return data;
         } else {
             const text = await response.text();
+            if (text.includes("403")) {
+                user.set(undefined);
+                location.replace(routeLogout);
+            }
             throw new Error(text);
         }
     }
@@ -122,7 +127,7 @@
                 {#each $quizzes as quiz}
                     <button
                         disabled={quizDetailMode == editMode}
-                        class="list-group-item list-group-item-action {quiz.id ===
+                        class="list-group-item list-group-item-action {quiz.quiz_id ===
                         selectedId
                             ? 'active'
                             : ''} d-flex justify-content-start align-items-center"

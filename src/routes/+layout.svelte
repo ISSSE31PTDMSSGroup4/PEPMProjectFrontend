@@ -18,7 +18,7 @@
     // Define a new fetch function with the desired behavior
     window.fetch = function (url, options) {
       // Check if the URL has a trailing slash and query parameters
-      if (url.includes('quiz') && !url.includes("?") && !url.endsWith("/")) {
+      if (url.includes("quiz") && !url.includes("?") && !url.endsWith("/")) {
         url += "/";
       }
 
@@ -39,7 +39,7 @@
     });
     if (response.ok) {
       const config = await response.json();
-      p = new Pusher(
+      let p = new Pusher(
         config.key,
         // pusher key
         {
@@ -138,6 +138,10 @@
       return true;
     } else {
       const text = await response.text();
+      if (text.includes("403")) {
+        user.set(undefined);
+        location.replace(routeLogout);
+      }
       console.log(text);
       //creatProfileHandler();
       return false;
