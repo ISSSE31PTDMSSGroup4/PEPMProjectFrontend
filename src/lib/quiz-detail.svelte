@@ -1,5 +1,10 @@
 <script>
-    import { quizAnswering } from "./../routes/store.js";
+    import {
+        reloadQuiz,
+        xUser,
+        quizHistory,
+        quizAnswering,
+    } from "./../routes/store.js";
     import NodePlus from "svelte-bootstrap-icons/lib/NodePlus.svelte";
     import Trash from "svelte-bootstrap-icons/lib/Trash.svelte";
     import { onMount, onDestroy, afterUpdate } from "svelte";
@@ -13,8 +18,9 @@
         viewMode,
         editMode,
         quizMode,
+        reviewMode,
     } from "../routes/constants.js";
-    import { reloadQuiz, xUser, quizHistory } from "../routes/store";
+    import { CheckLg, Key, XLg } from "svelte-bootstrap-icons";
 
     export let targetQuiz = undefined;
     export let quizDetailMode = viewMode;
@@ -39,6 +45,8 @@
     let removeQuestionProcessing = false;
     let editPromise;
     let editQuizProcessing = false;
+    let submitQuizModal;
+    let submitQuizProcessing = false;
     async function fetchData() {
         if (!targetQuiz) {
             return;
@@ -94,7 +102,7 @@
     };
 
     function getLastAnswer() {
-        if (quizDetailMode != quizMode) {
+        if (quizDetailMode != quizMode && quizDetailMode != reviewMode) {
             selectedOption = "";
             return;
         }
@@ -163,6 +171,23 @@
         }
         editQuizProcessing = false;
     }
+    const submitQuizClick = (e) => {
+        submitQuizModal.showHandler();
+    };
+
+    async function submitQuiz() {
+        let historyObj = $quizHistory.find(
+            (x) => x.quiz_id == quizDetail.quiz_id
+        );
+
+        if (!historyObj) {
+            alert("Error submit quiz result");
+        }
+        historyObj.submitted = true;
+        $quizHistory[$quizHistory.indexOf(historyObj)] = historyObj;
+
+        quizAnswering.set(false);
+    }
 
     async function removeQuiz() {
         removeQuizProcessing = true;
@@ -222,6 +247,42 @@
         }
     }
 
+    function getCorrectQuestionQty() {
+        let historyObj = $quizHistory.find(
+            (x) => x.quiz_id == quizDetail.quiz_id
+        );
+        if (!historyObj) {
+            return 0;
+        }
+        let correctQty = 0;
+        for (let i = 0; i < historyObj.questions.length; i++) {
+            if (
+                historyObj.questions[i].answer == quizDetail.questions[i].answer
+            ) {
+                correctQty++;
+            }
+        }
+        return correctQty;
+    }
+
+    function checkAnswer() {
+        let historyObj = $quizHistory.find(
+            (x) => x.quiz_id == quizDetail.quiz_id
+        );
+        if (!historyObj) {
+            return false;
+        }
+        let questionHistoryObj = historyObj.questions.find(
+            (x) => x.index == currIndex
+        );
+
+        console.log("123");
+        if (!questionHistoryObj) {
+            return false;
+        }
+        return questionHistoryObj.answer == question.answer;
+    }
+
     $: {
         if (quizDetailMode == quizMode && quizDetail) {
             console.log("selectOption ->", selectedOption);
@@ -230,8 +291,7 @@
                 let historyObj = $quizHistory.find(
                     (x) => x.quiz_id == quizDetail.quiz_id
                 );
-                if (historyObj) {
-                } else {
+                if (!historyObj) {
                     newRecord = true;
                     historyObj = {
                         quiz_id: quizDetail.quiz_id,
@@ -240,28 +300,30 @@
                     };
                 }
 
-                let questionHistoryObj = historyObj.questions.find(
-                    (x) => x.index == currIndex
-                );
-                if (questionHistoryObj) {
-                    questionHistoryObj.answer = selectedOption;
-                    console.log("update answer", questionHistoryObj);
-                    historyObj.questions[
-                        historyObj.questions.indexOf(questionHistoryObj)
-                    ] = questionHistoryObj;
-                } else {
-                    questionHistoryObj = {
-                        index: currIndex,
-                        answer: selectedOption,
-                    };
-                    historyObj.questions = [
-                        ...historyObj.questions,
-                        questionHistoryObj,
-                    ];
-                }
+                if (!historyObj.submitted) {
+                    let questionHistoryObj = historyObj.questions.find(
+                        (x) => x.index == currIndex
+                    );
+                    if (questionHistoryObj) {
+                        questionHistoryObj.answer = selectedOption;
+                        console.log("update answer", questionHistoryObj);
+                        historyObj.questions[
+                            historyObj.questions.indexOf(questionHistoryObj)
+                        ] = questionHistoryObj;
+                    } else {
+                        questionHistoryObj = {
+                            index: currIndex,
+                            answer: selectedOption,
+                        };
+                        historyObj.questions = [
+                            ...historyObj.questions,
+                            questionHistoryObj,
+                        ];
+                    }
 
-                if (newRecord) {
-                    $quizHistory = [$quizHistory, historyObj];
+                    if (newRecord) {
+                        $quizHistory = [$quizHistory, historyObj];
+                    }
                 }
             }
         }
@@ -272,6 +334,27 @@
     {#await fetchData()}
         <Spinner size="spinner-grow-lg" />
     {:then data}
+        {#if quizDetailMode == reviewMode}
+        <div class="container mt-5">
+            <div class="d-flex justify-content-center row">
+                <div class="col-md-12 col-lg-12">
+                    <div class="d-flex border bg-white p-3 justify-content-between">
+                        <h5>
+                            Your result of the Quiz: Correct: {getCorrectQuestionQty()},
+                            Total: {quizDetail?.questions.length}
+                        </h5>
+                        <button
+                            class="btn btn-secondary d-flex align-items-center"
+                            type="button"
+                            on:click={handleBackToChat}
+                            ><i class="fa fa-angle-left mt-1 mr-1" />Back to Chat</button
+                        >
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {/if}
         <div class="container mt-5">
             <div class="d-flex justify-content-center row">
                 <div class="col-md-12 col-lg-12">
@@ -347,6 +430,25 @@
                             <div
                                 class="d-flex flex-row align-items-center question-title"
                             >
+                                {#if quizDetailMode == reviewMode}
+                                    {#key currIndex}
+                                        {#if checkAnswer()}
+                                            <CheckLg
+                                                {size}
+                                                {width}
+                                                {height}
+                                                color="green"
+                                            />
+                                        {:else}
+                                            <XLg
+                                                {size}
+                                                {width}
+                                                {height}
+                                                color="red"
+                                            />
+                                        {/if}
+                                    {/key}
+                                {/if}
                                 <h3 class="text-primary">Q{currIndex}.</h3>
 
                                 {#if quizDetailMode == editMode}
@@ -374,6 +476,8 @@
                                     {:else}
                                         <input
                                             type="radio"
+                                            disabled={quizDetailMode !=
+                                                quizMode}
                                             bind:group={selectedOption}
                                             value={option}
                                             id={optionIndex}
@@ -395,7 +499,7 @@
                                             bind:value={question.answer}
                                             style="margin-bottom: 1rem;"
                                         />
-                                    {:else if quizDetailMode == viewMode}
+                                    {:else if quizDetailMode == viewMode || quizDetailMode == reviewMode}
                                         <h5 class="text-secondary">
                                             {question?.answer}
                                         </h5>
@@ -411,7 +515,7 @@
                                             class="form-control"
                                             bind:value={question.explanation}
                                         />
-                                    {:else if quizDetailMode == viewMode}
+                                    {:else if quizDetailMode == viewMode || quizDetailMode == reviewMode}
                                         <span class="text-secondary">
                                             {question?.explanation}
                                         </span>
@@ -464,6 +568,7 @@
                                 <button
                                     class="btn btn-primary border-primary align-items-center"
                                     type="button"
+                                    on:click={submitQuizClick}
                                 >
                                     Submit Quiz
                                 </button>
@@ -508,6 +613,13 @@
             processing={removeQuestionProcessing}
             bind:this={removeQuestionModal}
             on:buttonHandler={removeQuestion}
+        />
+        <PopupModal
+            title="Submit Quiz"
+            content="Are you sure to submit?"
+            processing={submitQuizProcessing}
+            bind:this={submitQuizModal}
+            on:buttonHandler={submitQuiz}
         />
     {:catch error}
         <p style="color: red">{error.message}</p>

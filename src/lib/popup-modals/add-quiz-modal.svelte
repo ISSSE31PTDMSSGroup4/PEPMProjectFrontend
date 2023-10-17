@@ -42,7 +42,6 @@
     };
 
     const validateBfSubmit = () => {
-        console.log(quiz);
         if (quiz.title === "") {
             alert("Please input valid quiz title.");
             return false;
@@ -88,9 +87,11 @@
 
     async function addQuiz() {
         processing = true;
+        console.log(JSON.stringify(quiz));
         const response = await fetch(quizReqUrl, {
             method: "POST",
             headers: {
+                "Content-Type": "application/json",
                 "X-USER": $xUser,
             },
             body: JSON.stringify(quiz),

@@ -3,7 +3,7 @@
     import Messages from "../lib/messages.svelte";
     import UserList from "../lib/user-list.svelte";
     import NewChat from "../lib/new-chat.svelte";
-    import { quizMsgPrefix, quizMsgSuffix } from "./constants";
+    import { quizMsgPrefix, quizMsgSpliter } from "./constants";
 
     let userListChild;
 
@@ -115,7 +115,7 @@
                                 avatar:
                                     "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
                             },
-                            message: quizMsgPrefix+"Quiz - Test Title"+quizMsgSuffix,
+                            message: quizMsgPrefix+quizMsgSpliter+'{"quiz_id": 1, "title":"Quiz - Test Title"}',
                         },
                         {
                             id: 765365,
@@ -295,7 +295,7 @@
                                 avatar:
                                     "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
                             },
-                            message:  quizMsgPrefix+"Quiz - Test Title"+quizMsgSuffix,
+                            message: quizMsgPrefix+quizMsgSpliter+'{"quiz_id": 1, "title":"Quiz - Test Title"}',
                         },
                         {
                             id: 765365,
