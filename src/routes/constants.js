@@ -11,18 +11,18 @@ const userServiceBaseUrl = "http://localhost:8001";
 //const quizServiceBaseUrl = "https://88847fa7-9974-44f1-b303-5e68a533bd65.mock.pstmn.io";
 const quizServiceBaseUrl = "http://localhost:5050/api";
 //user profile microservice
-export const userProfileUrl = userServiceBaseUrl + "/user/profile";
-export const updateUserProfileUrl = userServiceBaseUrl + "/user/profile/update";
-export const userProfilesUrl = userServiceBaseUrl + "/user/profiles";
-export const uploadAvatar = userServiceBaseUrl + "/user/profile/avatar/upload";
+export const userProfileUrl = baseApiUrl + "/user/profile";
+export const updateUserProfileUrl = baseApiUrl + "/user/profile/update";
+export const userProfilesUrl = baseApiUrl + "/user/profiles";
+export const uploadAvatar = baseApiUrl + "/user/profile/avatar/upload";
 //quiz microservice
-export const getUserQuizListUrl = quizServiceBaseUrl + "/quiz/list";
-export const getQuizDetailUrl = quizServiceBaseUrl + "/quiz/detail";
-export const quizUrl = quizServiceBaseUrl + "/quiz";
-export const questionUrl = quizServiceBaseUrl + "/quiz/question";
+export const getUserQuizListUrl = baseApiUrl + "/quiz/list";
+export const getQuizDetailUrl = baseApiUrl + "/quiz/detail";
+export const quizUrl = baseApiUrl + "/quiz";
+export const questionUrl = baseApiUrl + "/quiz/question";
 //chat microservice
-export const pusherCfgUrl = chatServiceBaseUrl + "/pusher_config";
-export const pusherMessageUrl = chatServiceBaseUrl + "/message";
+export const pusherCfgUrl = baseApiUrl + "/pusher_config";
+export const pusherMessageUrl = baseApiUrl + "/message";
 //route
 export const routeRoot = base + "/";
 export const routeQuiz = base +"/quiz";
