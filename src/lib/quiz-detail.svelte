@@ -4,6 +4,7 @@
         xUser,
         quizHistory,
         quizAnswering,
+        reloadQuizList,
     } from "./../routes/store.js";
     import NodePlus from "svelte-bootstrap-icons/lib/NodePlus.svelte";
     import Trash from "svelte-bootstrap-icons/lib/Trash.svelte";
@@ -36,7 +37,9 @@
 
     let createQuestionObj;
     let quizDetail = undefined;
+    let quizSnapShot = undefined;
     let currIndex = 1;
+    let questionSnapshot = undefined;
     let question = undefined;
     let selectedOption = "";
     let removeQuizModal;
@@ -47,22 +50,26 @@
     let editQuizProcessing = false;
     let submitQuizModal;
     let submitQuizProcessing = false;
+    let editQuestionProcessing = false;
     async function fetchData() {
         if (!targetQuiz) {
             return;
         }
-        const response = await fetch(url + "?quiz_id=" + targetQuiz.id, {
+        const response = await fetch(url + "?quiz_id=" + targetQuiz.quiz_id, {
             method: "GET",
             headers: {
                 "X-USER": $xUser,
             },
         });
         if (response.ok) {
-            currIndex = 1;
             const data = await response.json();
+            data.questions?.sort((a, b) => {
+                return parseInt(a.index) - parseInt(b.index);
+            });
             console.log("quiz detail", data);
             quizDetail = data;
-            question = quizDetail?.questions?.find((x) => x.index == currIndex);
+            updateQuizSnapshot();
+            getQuestion();
             getLastAnswer();
             return data;
         } else {
@@ -87,8 +94,9 @@
         if (currIndex >= quizDetail?.questions.length) {
             return;
         }
+        resetQuestion();
         currIndex++;
-        question = quizDetail?.questions?.find((x) => x.index == currIndex);
+        getQuestion();
         getLastAnswer();
     };
 
@@ -96,10 +104,76 @@
         if (currIndex <= 1) {
             return;
         }
+        resetQuestion();
         currIndex--;
-        question = quizDetail?.questions?.find((x) => x.index == currIndex);
+        getQuestion();
         getLastAnswer();
     };
+
+    const handleSaveQuestionClick = async (e) => {
+        await editQuestion();
+    };
+
+    const handleCancelEditQuestionClick = (e) => {
+        resetQuestion();
+        getQuestion();
+    };
+
+    const handleCancelEditQuizClick = (e) => {
+        resetQuizBaseInfo();
+        updateQuizSnapshot();
+    };
+
+    function resetQuizBaseInfo() {
+        if (quizDetailMode != editMode) {
+            return;
+        }
+        quizDetail.title = quizSnapShot.title;
+        quizDetail.remark = quizSnapShot.remark;
+    }
+
+    function updateQuizSnapshot() {
+        quizSnapShot = {
+            title: quizDetail.title,
+            remark: quizDetail.remark,
+        };
+    }
+
+    function checkQuizEdited(quizDetail, quizSnapShot) {
+        if (!quizDetail || !quizSnapShot || quizDetailMode != editMode) {
+            return false;
+        }
+
+        return (
+            quizSnapShot.title !== quizDetail.title ||
+            quizSnapShot.remark !== quizDetail.remark
+        );
+    }
+
+    $: quizEdited = checkQuizEdited(quizDetail, quizSnapShot);
+
+    function resetQuestion() {
+        if (quizDetailMode != editMode) {
+            return;
+        }
+        quizDetail.questions[currIndex - 1] = JSON.parse(
+            JSON.stringify(questionSnapshot)
+        );
+    }
+
+    function getQuestion() {
+        question = quizDetail?.questions?.at(currIndex - 1);
+        questionSnapshot = JSON.parse(JSON.stringify(question));
+    }
+
+    $: questionEdited = questionEditted(question, questionSnapshot);
+
+    function questionEditted(question, questionSnapshot) {
+        if (!question || !questionSnapshot || quizDetailMode != editMode) {
+            return false;
+        }
+        return JSON.stringify(question) !== JSON.stringify(questionSnapshot);
+    }
 
     function getLastAnswer() {
         if (quizDetailMode != quizMode && quizDetailMode != reviewMode) {
@@ -115,7 +189,9 @@
             return;
         }
         let historyQuestionObj = historyObj.questions.find(
-            (x) => x.index == currIndex
+            (x) =>
+                x.question_id ==
+                quizDetail?.questions?.at(currIndex - 1).question_id
         );
         if (!historyQuestionObj) {
             selectedOption = "";
@@ -137,6 +213,10 @@
     };
 
     const removeQuestionClick = (e) => {
+        if (quizDetail.questions.length <= 1) {
+            alert("Can't remove last question");
+            return;
+        }
         removeQuestionModal.showHandler();
     };
 
@@ -146,6 +226,20 @@
     const handleQuestionCreated = () => {
         reloadTrigger = {};
     };
+
+    function getMaxIndexNumber() {
+        let maxIndex = Math.max.apply(
+            Math,
+            quizDetail?.questions.map((x) => {
+                return x.index;
+            })
+        );
+        //console.log('maxIndex', maxIndex);
+        if (!maxIndex) {
+            return quizDetail.questions.length;
+        }
+        return maxIndex;
+    }
 
     async function editQuiz() {
         console.log("request body", quizDetail);
@@ -161,7 +255,8 @@
         if (response.ok) {
             const data = await response.json();
             console.log("request success", data);
-            reloadTrigger = {};
+            updateQuizSnapshot();
+            $reloadQuizList = {};
         } else {
             const text = await response.text();
             if (unauthorizeHandler(text)) {
@@ -198,7 +293,7 @@
                 "X-USER": $xUser,
             },
             body: JSON.stringify({
-                quiz_id: quizDetail.id,
+                quiz_id: quizDetail.quiz_id,
             }),
         });
         if (response.ok) {
@@ -206,6 +301,7 @@
             console.log("request success", data);
             removeQuizModal.closeHandler();
             removeQuizProcessing = false;
+            currIndex = 1;
             reloadQuiz.set({});
         } else {
             const text = await response.text();
@@ -217,6 +313,33 @@
         }
     }
 
+    async function editQuestion() {
+        let reqBody = JSON.parse(JSON.stringify(question));
+        reqBody.quiz_id = quizDetail.quiz_id;
+        console.log("request body edit question", JSON.stringify(reqBody));
+        editQuestionProcessing = true;
+        const response = await fetch(questionUrl, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "X-USER": $xUser,
+            },
+            body: JSON.stringify(reqBody),
+        });
+        if (response.ok) {
+            const data = await response.json();
+            console.log("request success", data);
+            reloadTrigger = {};
+        } else {
+            const text = await response.text();
+            if (unauthorizeHandler(text)) {
+                return;
+            }
+            alert(text);
+        }
+        editQuestionProcessing = false;
+    }
+
     async function removeQuestion() {
         removeQuestionProcessing = true;
         const response = await fetch(questionReqUrl, {
@@ -226,14 +349,14 @@
                 "X-USER": $xUser,
             },
             body: JSON.stringify({
-                quiz_id: quizDetail.id,
-                question_id: question.id,
+                quiz_id: quizDetail.quiz_id,
+                question_id: question.question_id,
             }),
         });
         if (response.ok) {
             const data = await response.json();
             console.log("request success", data);
-
+            currIndex--;
             removeQuizModal.closeHandler();
             removeQuestionProcessing = false;
             reloadTrigger = {};
@@ -272,11 +395,11 @@
         if (!historyObj) {
             return false;
         }
+        question_id = quizDetail?.questions?.at(currIndex - 1).question_id;
         let questionHistoryObj = historyObj.questions.find(
-            (x) => x.index == currIndex
+            (x) => (x.question_id == x.question_id) == question_id
         );
 
-        console.log("123");
         if (!questionHistoryObj) {
             return false;
         }
@@ -301,8 +424,11 @@
                 }
 
                 if (!historyObj.submitted) {
+                    let question_id = quizDetail?.questions?.at(
+                        currIndex - 1
+                    ).question_id;
                     let questionHistoryObj = historyObj.questions.find(
-                        (x) => x.index == currIndex
+                        (x) => (x.question_id == x.question_id) == question_id
                     );
                     if (questionHistoryObj) {
                         questionHistoryObj.answer = selectedOption;
@@ -312,7 +438,7 @@
                         ] = questionHistoryObj;
                     } else {
                         questionHistoryObj = {
-                            index: currIndex,
+                            question_id: question_id,
                             answer: selectedOption,
                         };
                         historyObj.questions = [
@@ -335,25 +461,27 @@
         <Spinner size="spinner-grow-lg" />
     {:then data}
         {#if quizDetailMode == reviewMode}
-        <div class="container mt-5">
-            <div class="d-flex justify-content-center row">
-                <div class="col-md-12 col-lg-12">
-                    <div class="d-flex border bg-white p-3 justify-content-between">
-                        <h5>
-                            Your result of the Quiz: Correct: {getCorrectQuestionQty()},
-                            Total: {quizDetail?.questions.length}
-                        </h5>
-                        <button
-                            class="btn btn-secondary d-flex align-items-center"
-                            type="button"
-                            on:click={handleBackToChat}
-                            ><i class="fa fa-angle-left mt-1 mr-1" />Back to Chat</button
+            <div class="container mt-5">
+                <div class="d-flex justify-content-center row">
+                    <div class="col-md-12 col-lg-12">
+                        <div
+                            class="d-flex border bg-white p-3 justify-content-between"
                         >
+                            <h5>
+                                Your result of the Quiz: Correct: {getCorrectQuestionQty()},
+                                Total: {quizDetail?.questions.length}
+                            </h5>
+                            <button
+                                class="btn btn-secondary d-flex align-items-center"
+                                type="button"
+                                on:click={handleBackToChat}
+                                ><i class="fa fa-angle-left mt-1 mr-1" />Back to
+                                Chat</button
+                            >
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-
         {/if}
         <div class="container mt-5">
             <div class="d-flex justify-content-center row">
@@ -405,6 +533,34 @@
                                     <h5>{quizDetail?.remark}</h5>
                                 {/if}
                             </div>
+                            {#if quizDetailMode == editMode && quizEdited}
+                                <div class="flex-row" style="margin-top: 1rem;">
+                                    <button
+                                        class="btn border-secondary align-items-center btn-secondary"
+                                        type="button"
+                                        on:click={handleCancelEditQuizClick}
+                                        >Cancel<i
+                                            class="fa fa-angle-right ml-2"
+                                        /></button
+                                    >
+                                    <button
+                                        class="btn border-success align-items-center btn-success"
+                                        type="button"
+                                        disabled={editQuizProcessing}
+                                        style="margin-left: 0.1rem;"
+                                        on:click={handleApplyChangesClick}
+                                    >
+                                        {#if editQuizProcessing}
+                                            <span
+                                                class="spinner-border spinner-border-sm"
+                                            />
+                                            Processing...
+                                        {:else}
+                                            Apply Changes
+                                        {/if}
+                                    </button>
+                                </div>
+                            {/if}
                         </div>
                         {#if quizDetailMode == editMode}
                             <div style="margin-left: 1rem; margin-top: 1rem;">
@@ -490,7 +646,7 @@
                         </div>
                         {#if quizDetailMode != quizMode}
                             <div class="p-3 bg-white">
-                                <div class="d-flex flex-row align-items-center">
+                                <div class="d-flex flex-row">
                                     <h5 style="margin-right: 1rem;">Answer:</h5>
                                     {#if quizDetailMode == editMode}
                                         <input
@@ -505,10 +661,12 @@
                                         </h5>
                                     {/if}
                                 </div>
-                                <div class="d-flex flex-row align-items-center">
+                                <div class="d-flex flex-col">
                                     <h5 style="margin-right: 1rem;">
-                                        Expanation:
+                                        Explanation:
                                     </h5>
+                                </div>
+                                <div class="d-flex flex-col">
                                     {#if quizDetailMode == editMode}
                                         <input
                                             type="text"
@@ -539,7 +697,8 @@
                                 <button
                                     class="btn d-flex align-items-center btn-danger"
                                     type="button"
-                                    style="visibility: {currIndex <= 1
+                                    style="visibility: {currIndex <= 1 ||
+                                    questionEdited
                                         ? 'collapse'
                                         : 'visible'};"
                                     on:click={handlePreviousClick}
@@ -548,23 +707,7 @@
                                     />Previous</button
                                 >
                             {/if}
-                            {#if currIndex >= quizDetail?.questions.length && quizDetailMode == editMode}
-                                <button
-                                    class="btn border-primary align-items-center btn-primary"
-                                    type="button"
-                                    disabled={editQuizProcessing}
-                                    on:click={handleApplyChangesClick}
-                                >
-                                    {#if editQuizProcessing}
-                                        <span
-                                            class="spinner-border spinner-border-sm"
-                                        />
-                                        Processing...
-                                    {:else}
-                                        Apply Changes
-                                    {/if}
-                                </button>
-                            {:else if currIndex >= quizDetail?.questions.length && quizDetailMode == quizMode}
+                            {#if currIndex >= quizDetail?.questions.length && quizDetailMode == quizMode}
                                 <button
                                     class="btn btn-primary border-primary align-items-center"
                                     type="button"
@@ -572,9 +715,35 @@
                                 >
                                     Submit Quiz
                                 </button>
+                            {:else if questionEdited}
+                                <div class="d-flex flex-row">
+                                    <button
+                                        class="btn border-secondary align-items-center btn-secondary"
+                                        type="button"
+                                        on:click={handleCancelEditQuestionClick}
+                                        >Cancel<i
+                                            class="fa fa-angle-right ml-2"
+                                        /></button
+                                    >
+                                    <button
+                                        class="btn border-success align-items-center btn-success"
+                                        type="button"
+                                        style="margin-left: 0.5rem;"
+                                        on:click={handleSaveQuestionClick}
+                                    >
+                                        {#if editQuestionProcessing}
+                                            <span
+                                                class="spinner-border spinner-border-sm"
+                                            />
+                                            Processing...
+                                        {:else}
+                                            Save Changes
+                                        {/if}</button
+                                    >
+                                </div>
                             {:else}
                                 <button
-                                    class="btn border-success align-items-center btn-success"
+                                    class="btn border-primary align-items-center btn-primary"
                                     type="button"
                                     style="visibility: {currIndex >=
                                     quizDetail?.questions.length
@@ -593,8 +762,8 @@
         </div>
 
         <AddQuestionModal
-            quizId={quizDetail.id}
-            index={quizDetail.index}
+            quizId={quizDetail.quiz_id}
+            index={getMaxIndexNumber() + 1}
             bind:this={createQuestionObj}
             on:questionCreated={handleQuestionCreated}
         />

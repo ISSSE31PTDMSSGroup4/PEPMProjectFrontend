@@ -17,7 +17,8 @@
         title: "",
         questions: [
             {
-                title: "",
+                index: 1,
+                question: "",
                 options: ["", "", "", ""],
                 answer: "",
                 explanation: "",
@@ -57,7 +58,7 @@
         
         let validQuestions =  false;
         quiz.questions.forEach((question) => {
-            if (question.title === "") {
+            if (question.question === "") {
                 alert("Please input valid question title.");
                 return false;
             }

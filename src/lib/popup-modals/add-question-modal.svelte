@@ -8,14 +8,16 @@
     import { xUser } from "../../routes/store";
 
     export let quizId = "";
-    export let index = "";
+    export let index = undefined;
     const dispatch = createEventDispatcher();
     const questionReqUrl = questionUrl;
     let processing = false;
     let showModal;
     let modalObj;
     let question = {
-        title: "",
+        quiz_id : quizId,
+        index: index,
+        question: "",
         options: ["", "", "", ""],
         answer: "",
         explanation: "",
@@ -38,8 +40,8 @@
     };
 
     const validateBfSubmit = () => {
-        console.log(question);
-        if (question.title === "") {
+        console.log('valid question', question);
+        if (question.question === "") {
             alert("Please input valid question title.");
             return false;
         }
@@ -47,21 +49,26 @@
             alert("Please input valid options.");
             return false;
         }
+        if (!question.index) {
+            alert("Invalid index.");
+            return false;
+        }
         let validOptions = false;
-        options.forEach((opition) => {
+        question.options.forEach((opition) => {
             if (opition === "") {
                 alert("Please input valid options.");
-                return false;
-            }
-            
+                validOptions = false;
+            }            
             validOptions = true;
         });
-        if (new Set(options).size !== options.length){
+        if(!validOptions){return false;}
+
+        if (new Set(question.options).size !== question.options.length){
             alert("Duplicate options, please make sure the option contents are difference.");
             return false;
         }
 
-        if (question.answer === "" || !options.includes(question.answer)) {
+        if (question.answer === "" || !question.options.includes(question.answer)) {
             alert(
                 "Please input valid anwser and the anwser must from the options"
             );
@@ -79,17 +86,18 @@
     async function addQuestion() {
         processing = true;
         let reqBody = {
-            quiz_id: quizId,
-            index: index,
-            title: question.title,
+            quiz_id: question.quiz_id,
+            index: question.index,
+            question: question.question,
             options: question.options,
             answer: question.answer,
             explanation: question.explanation,
         };
-        console.log("request body", reqBody);
+        console.log("add question req body", reqBody);
         const response = await fetch(questionReqUrl, {
             method: "POST",
             headers: {
+                "Content-Type": "application/json",
                 "X-USER": $xUser,
             },
             body: JSON.stringify(reqBody),
@@ -102,12 +110,12 @@
             closeHandler();
         } else {
             const text = await response.text();
-
             processing = false;
             closeHandler();
             if (text.includes("403")) {
                 user.set(undefined);
                 location.replace(routeLogout);
+                return;
             }
                         
             alert(text);

@@ -8,8 +8,8 @@ const baseApiUrl = "https://issse31ptdmss.xyz/api";
 const chatServiceBaseUrl = "http://localhost:8000/api";
 const loginServiceBaseUrl = "http://localhost:5000";
 const userServiceBaseUrl = "http://localhost:8001";
-const quizServiceBaseUrl = "https://88847fa7-9974-44f1-b303-5e68a533bd65.mock.pstmn.io";
-//const quizServiceBaseUrl = "http://localhost:5050/api";
+//const quizServiceBaseUrl = "https://88847fa7-9974-44f1-b303-5e68a533bd65.mock.pstmn.io";
+const quizServiceBaseUrl = "http://localhost:5050/api";
 //user profile microservice
 export const userProfileUrl = userServiceBaseUrl + "/user/profile";
 export const updateUserProfileUrl = userServiceBaseUrl + "/user/profile/update";

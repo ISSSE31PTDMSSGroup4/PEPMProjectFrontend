@@ -12,7 +12,12 @@
         editMode,
     } from "../routes/constants.js";
     import AddQuizModal from "./popup-modals/add-quiz-modal.svelte";
-    import { reloadQuiz, quizzes, xUser } from "../routes/store";
+    import {
+        reloadQuiz,
+        quizzes,
+        xUser,
+        reloadQuizList,
+    } from "../routes/store";
     export let quizDetailMode = viewMode;
 
     const url = getUserQuizListUrl;
@@ -98,7 +103,7 @@
                 data-bs-original-title="EditQuiz"
                 on:click={updateQuizDetailType}
             >
-                {#if quizDetailMode == viewMode && selectedId > 0}
+                {#if quizDetailMode == viewMode && selectedId != -1}
                     <PencilSquare {size} {width} {height} {color} />
                 {:else if quizDetailMode == editMode}
                     <XSquare {size} {width} {height} color="red" />
@@ -121,27 +126,29 @@
 <div class="row">
     <div class="quiz-list-block">
         <div class="list-group">
-            {#await fetchData()}
-                <Spinner size="spinner-grow-sm" />
-            {:then data}
-                {#each $quizzes as quiz}
-                    <button
-                        disabled={quizDetailMode == editMode}
-                        class="list-group-item list-group-item-action {quiz.quiz_id ===
-                        selectedId
-                            ? 'active'
-                            : ''} d-flex justify-content-start align-items-center"
-                        on:click={handleQuizSelect(quiz)}
-                    >
-                        <div class="col-12">
-                            <h5>{quiz.title}</h5>
-                            <p>{quiz.remark}</p>
-                        </div>
-                    </button>
-                {/each}
-            {:catch error}
-                <p style="color: red">{error.message}</p>
-            {/await}
+            {#key $reloadQuizList}
+                {#await fetchData()}
+                    <Spinner size="spinner-grow-sm" />
+                {:then data}
+                    {#each $quizzes as quiz}
+                        <button
+                            disabled={quizDetailMode == editMode}
+                            class="list-group-item list-group-item-action {quiz.quiz_id ===
+                            selectedId
+                                ? 'active'
+                                : ''} d-flex justify-content-start align-items-center"
+                            on:click={handleQuizSelect(quiz)}
+                        >
+                            <div class="col-12">
+                                <h5>{quiz.title}</h5>
+                                <p>{quiz.remark}</p>
+                            </div>
+                        </button>
+                    {/each}
+                {:catch error}
+                    <p style="color: red">{error.message}</p>
+                {/await}
+            {/key}
         </div>
     </div>
 </div>

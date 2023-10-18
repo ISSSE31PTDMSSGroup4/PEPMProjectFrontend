@@ -22,6 +22,7 @@ quizHistory.subscribe((value) => {
 });
 
 export let reloadQuiz = writable({});
+export let reloadQuizList = writable({});
 export let quizzes = writable([]);
 export let quizAnswering = writable(false);
 export let xUser = writable("");

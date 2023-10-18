@@ -41,7 +41,7 @@
             >
                 {#if !selectedQuiz}
                     <h1>No Quiz selected</h1>
-                {:else if selectedQuiz.id < 0}
+                {:else if selectedQuiz.quiz_id < 0}
                     <!-- <NewChat on:newChatCreated={handleNewChatCreated}/> -->
                 {:else}
                     <QuizDetail

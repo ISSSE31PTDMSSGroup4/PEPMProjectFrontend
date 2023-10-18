@@ -2,7 +2,7 @@
     import { onMount, onDestroy, afterUpdate } from "svelte";
     import Spinner from "./spinner.svelte";
     export let question = {
-        title: "",
+        question: "",
         options: ["", "", "", ""],
         answer: "",
         explanation: "",
@@ -19,7 +19,7 @@
                         <input
                             type="text"
                             class="form-control"
-                            bind:value={question.title}
+                            bind:value={question.question}
                         />
                     </div>
                 </div>
