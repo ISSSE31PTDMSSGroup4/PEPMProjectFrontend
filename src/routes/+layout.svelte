@@ -138,12 +138,17 @@
       return true;
     } else {
       const text = await response.text();
+      
+      if (text.includes("500")) {
+        //Temp bypass user profile 500 error
+        creatProfileHandler();
+        return true;
+      }
       if (text.includes("403")) {
         user.set(undefined);
         location.replace(routeLogout);
       }
       console.log(text);
-      //creatProfileHandler();
       return false;
     }
   }
