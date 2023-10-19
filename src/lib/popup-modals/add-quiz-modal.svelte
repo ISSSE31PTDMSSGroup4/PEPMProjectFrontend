@@ -99,13 +99,17 @@
         });
         if (response.ok) {
             const data = await response.json();
+            if(data.code && data.code !== 200){
+                alert(data.message);
+                processing = false;
+                return;
+            }
             console.log("request success", data);
             processing = false;
             dispatch("quizCreated");
             closeHandler();
         } else {
-            const text = await response.text();
-            
+            const text = await response.text();            
             processing = false;
             if (text.includes("403")) {
                 user.set(undefined);

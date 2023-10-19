@@ -104,6 +104,11 @@
         });
         if (response.ok) {
             const data = await response.json();
+            if(data.code && data.code !== 200){
+                alert(data.message);
+                processing = false;
+                return;
+            }
             console.log("request success", data);
             processing = false;
             dispatch("questionCreated");

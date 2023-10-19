@@ -63,6 +63,9 @@
         });
         if (response.ok) {
             const data = await response.json();
+            if(data.code && data.code === 400){
+                return;
+            }
             data.questions?.sort((a, b) => {
                 return parseInt(a.index) - parseInt(b.index);
             });
@@ -254,6 +257,10 @@
         });
         if (response.ok) {
             const data = await response.json();
+            if(data.code && data.code !== 200){
+                alert(data.message);
+                return;
+            }
             console.log("request success", data);
             updateQuizSnapshot();
             $reloadQuizList = {};
@@ -298,6 +305,10 @@
         });
         if (response.ok) {
             const data = await response.json();
+            if(data.code && data.code !== 200){
+                alert(data.message);
+                return;
+            }
             console.log("request success", data);
             removeQuizModal.closeHandler();
             removeQuizProcessing = false;
@@ -328,6 +339,10 @@
         });
         if (response.ok) {
             const data = await response.json();
+            if(data.code && data.code !== 200){
+                alert(data.message);
+                return;
+            }
             console.log("request success", data);
             reloadTrigger = {};
         } else {
@@ -355,8 +370,12 @@
         });
         if (response.ok) {
             const data = await response.json();
+            if(data.code && data.code !== 200){
+                alert(data.message);
+                return;
+            }
             console.log("request success", data);
-            currIndex--;
+            if(currIndex > 1){ currIndex--};
             removeQuizModal.closeHandler();
             removeQuestionProcessing = false;
             reloadTrigger = {};

@@ -77,8 +77,12 @@
         });
         if (response.ok) {
             const data = await response.json();
+            if(data.code && data.code === 400){
+                $quizzes = [];
+                return;
+            }
             console.log("quizListData", data);
-            quizzes.set(data);
+            $quizzes = data;
             return data;
         } else {
             const text = await response.text();
