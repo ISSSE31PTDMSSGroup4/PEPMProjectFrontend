@@ -115,7 +115,7 @@
                                 avatar:
                                     "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
                             },
-                            message: quizMsgPrefix+quizMsgSpliter+'{"quiz_id": 1, "title":"Quiz - Test Title"}',
+                            message: quizMsgPrefix+quizMsgSpliter+'{"quiz_id": "c33e8797", "title":"Quiz - Test Title"}',
                         },
                         {
                             id: 765365,
@@ -295,7 +295,7 @@
                                 avatar:
                                     "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
                             },
-                            message: quizMsgPrefix+quizMsgSpliter+'{"quiz_id": 1, "title":"Quiz - Test Title"}',
+                            message: quizMsgPrefix+quizMsgSpliter+'{"quiz_id": "c33e8797", "title":"Quiz - Test Title"}',
                         },
                         {
                             id: 765365,

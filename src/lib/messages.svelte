@@ -19,7 +19,7 @@
     let channel;
     let messages;
     let enterQuizMode = quizMode;
-    let targetQuiz = { id: -1 };
+    let targetQuiz = { quiz_id: "" };
 
     export let targetUser = {
         id: 1,
@@ -166,8 +166,8 @@
             alert("Invalid quiz link");
             return;
         }
-        targetQuiz.id = quiz.quiz_id;
-        if (targetQuiz.id <= 0) {
+        targetQuiz.quiz_id = quiz.quiz_id;
+        if (targetQuiz.quiz_id === "") {
             return;
         }
         enterQuizMode = mode;

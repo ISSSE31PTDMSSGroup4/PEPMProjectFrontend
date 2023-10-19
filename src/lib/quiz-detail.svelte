@@ -55,6 +55,7 @@
         if (!targetQuiz) {
             return;
         }
+        console.log(targetQuiz.quiz_id);
         const response = await fetch(url + "?quiz_id=" + targetQuiz.quiz_id, {
             method: "GET",
             headers: {
@@ -64,7 +65,7 @@
         if (response.ok) {
             const data = await response.json();
             if(data.code && data.code === 400){
-                return;
+                throw new Error(data.message);
             }
             data.questions?.sort((a, b) => {
                 return parseInt(a.index) - parseInt(b.index);
@@ -414,9 +415,9 @@
         if (!historyObj) {
             return false;
         }
-        question_id = quizDetail?.questions?.at(currIndex - 1).question_id;
+        let question_id = quizDetail?.questions?.at(currIndex - 1)?.question_id;
         let questionHistoryObj = historyObj.questions.find(
-            (x) => (x.question_id == x.question_id) == question_id
+            (x) => (x.question_id == question_id)
         );
 
         if (!questionHistoryObj) {
@@ -447,7 +448,7 @@
                         currIndex - 1
                     ).question_id;
                     let questionHistoryObj = historyObj.questions.find(
-                        (x) => (x.question_id == x.question_id) == question_id
+                        (x) => (x.question_id == question_id)
                     );
                     if (questionHistoryObj) {
                         questionHistoryObj.answer = selectedOption;
@@ -460,6 +461,7 @@
                             question_id: question_id,
                             answer: selectedOption,
                         };
+                        console.log("add answer", questionHistoryObj);
                         historyObj.questions = [
                             ...historyObj.questions,
                             questionHistoryObj,
