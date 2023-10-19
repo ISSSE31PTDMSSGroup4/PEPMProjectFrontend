@@ -1,12 +1,14 @@
 <script>
     import { onMount, onDestroy, afterUpdate } from "svelte";
-    import { user } from "./../../routes/store.js";
+    import { user, xUser } from "./../../routes/store.js";
     import Modal from "./base-modal.svelte";
     import {
         userProfileUrl,
         updateUserProfileUrl,
+        uploadAvatar,
         routeLogin,
     } from "../../routes/constants";
+    import Spinner from "../spinner.svelte";
     export let mode = "edit";
     export let profileData = {
         name: "",
@@ -14,24 +16,42 @@
         email: "",
         about: "",
     };
+
     let formTitle = mode === "edit" ? "Edit" : "Create";
     let showModal = false;
     let modalObj;
     let processing = false;
+    let avatarUploading = false;
     let buttoneText = mode === "edit" ? "Save Changes" : "Submit";
     let fileinput;
-    onMount(() => {
-        
-    });
-    const onFileSelected = (e) => {
+    onMount(() => {});
+    const onFileSelected = async (e) => {
         let image = e.target.files[0];
-        let reader = new FileReader();
-        reader.readAsDataURL(image);
-        reader.onload = (e) => {
-            profileData.avatar = e.target.result;
-            $user.avatar =  e.target.result;
-            //TODO: Call API to upload the avatar file
-        };
+        //console.log(image.type);
+        //console.log('image size', image.size);
+        if (!image) {
+            alert("Invalid file");
+            return;
+        } else if (image.size > 10 * 1024 * 1024) {
+            alert("Image size is too large");
+            return;
+        } else if (
+            image.type !== "image/jpg" &&
+            image.type !== "image/jpeg" &&
+            image.type !== "image/png"
+        ) {
+            alert("Only support jpg and png file");
+            return;
+        }
+
+        await postUploadAvatar(image);
+        //let reader = new FileReader();
+        //reader.readAsDataURL(image);
+        //reader.onload = (e) => {
+        //profileData.avatar = e.target.result;
+        //$user.avatar =  e.target.result;
+        //TODO: Call API to upload the avatar file
+        //};
     };
 
     export const showHandler = () => {
@@ -46,7 +66,7 @@
     const submitHandler = async () => {
         //Temp Hardcode
         profileData.avatar = "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp";
-        if(!validateBfSubmit()){
+        if (!validateBfSubmit()) {
             return;
         }
         await triggerUserProfile();
@@ -54,15 +74,15 @@
 
     const validateBfSubmit = () => {
         console.log(profileData);
-        if(profileData.email === ''){
+        if (profileData.email === "") {
             alert("Please input valid email.");
             return false;
         }
-        if(profileData.name === ''){
+        if (profileData.name === "") {
             alert("Please input valid name.");
             return false;
         }
-        if(profileData.avatar === ''){
+        if (profileData.avatar === "") {
             alert("Please upload avatar before submit.");
             return false;
         }
@@ -71,7 +91,7 @@
 
     async function triggerUserProfile() {
         processing = true;
-        
+
         let url = updateUserProfileUrl;
         let method = "PUT";
         let reqBody = {
@@ -94,11 +114,9 @@
         console.log("reqbody", JSON.stringify(reqBody));
         const response = await fetch(url, {
             method: method,
-            mode: "cors",
-            credentials: "include",
             headers: {
                 "Content-Type": "application/json",
-                "X-USER": profileData.email
+                "X-USER": $xUser,
             },
             body: JSON.stringify(reqBody),
         });
@@ -110,7 +128,7 @@
             closeHandler();
             return;
         } else {
-            const text = await response.text();            
+            const text = await response.text();
             processing = false;
             if (text.includes("403")) {
                 user.set(undefined);
@@ -118,6 +136,41 @@
             }
             alert(text);
         }
+    }
+
+    async function postUploadAvatar(image) {
+        if (!image) {
+            return;
+        }
+        avatarUploading = true;
+        let url = uploadAvatar;
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "multipart/form-data",
+                "Content-Type": image.type,
+                "X-USER": $xUser,
+            },
+            body: image,
+        });
+        if (response.ok) {
+            const data = await response.json();
+            console.log("respose", data);
+            let res = JSON.parse(data);
+            profileData.avatar = res.avatar;
+            if (mode === "edit") {
+                $user.avatar = res.avatar;
+            }
+        } else {
+            const text = await response.text();
+            processing = false;
+            if (text.includes("403")) {
+                user.set(undefined);
+                location.replace(routeLogout);
+            }
+            alert(text);
+        }
+        avatarUploading = false;
     }
 </script>
 
@@ -132,38 +185,47 @@
         <div class="container rounded bg-white mt-5 mb-5">
             <div class="row">
                 <div class="col-md-3 border-right">
-                    <div
-                        class="d-flex flex-column align-items-center text-center p-3 py-5"
-                    >
-                        <img
-                            class="rounded-circle mt-5"
-                            width="150px"
-                            src={profileData.avatar &&
-                            profileData.avatar != ""
-                                ? profileData.avatar
-                                : "./icons8-user-96.png"}
-                            alt=""
-                        />
-
-                        <div class="mt-5 text-center">
-                            <button
-                                class="btn btn-outline-primary profile-button"
-                                type="button"
-                                on:click={() => {
-                                    fileinput.click();
-                                }}
-                            >
-                                Upload Avatar
-                            </button>
-                            <input
-                                style="display:none"
-                                type="file"
-                                accept=".jpg, .jpeg, .png"
-                                on:change={(e) => onFileSelected(e)}
-                                bind:this={fileinput}
-                            />
+                    {#if avatarUploading}
+                        <div
+                            class="d-flex flex-row align-items-center justify-content-center"
+                            style="height: 50%;"
+                        >
+                            <Spinner />
                         </div>
-                    </div>
+                    {:else}
+                        <div
+                            class="d-flex flex-column align-items-center text-center p-3 py-5"
+                        >
+                            <img
+                                class="rounded-circle mt-5"
+                                width="150px"
+                                src={profileData.avatar &&
+                                profileData.avatar != ""
+                                    ? profileData.avatar
+                                    : "./icons8-user-96.png"}
+                                alt=""
+                            />
+
+                            <div class="mt-5 text-center">
+                                <button
+                                    class="btn btn-outline-primary profile-button"
+                                    type="button"
+                                    on:click={() => {
+                                        fileinput.click();
+                                    }}
+                                >
+                                    Upload Avatar
+                                </button>
+                                <input
+                                    style="display:none"
+                                    type="file"
+                                    accept=".jpg, .jpeg, .png"
+                                    on:change={(e) => onFileSelected(e)}
+                                    bind:this={fileinput}
+                                />
+                            </div>
+                        </div>
+                    {/if}
                 </div>
                 <div class="col-md-9 border-right">
                     <div class="p-3 py-5">
@@ -171,7 +233,7 @@
                             class="d-flex justify-content-between align-items-center mb-3"
                         >
                             <h4 class="text-right">Profile Information</h4>
-                        </div>                        
+                        </div>
                         <div class="row mt-3">
                             <div class="col-md-12">
                                 <!-- svelte-ignore a11y-label-has-associated-control -->
@@ -180,7 +242,7 @@
                                     class="form-control"
                                     placeholder="enter email"
                                     bind:value={profileData.email}
-                                    disabled 
+                                    disabled
                                     readonly
                                 />
                             </div>
