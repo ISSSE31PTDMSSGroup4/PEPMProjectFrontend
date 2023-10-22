@@ -2,7 +2,7 @@
     import Sendbox from "./sendbox.svelte";   
     import { createEventDispatcher } from "svelte";
     import { onMount, onDestroy, afterUpdate } from "svelte";
-    import { userProfilesUrl, addChannelUrl, chatMessageUrl, quizMsgPrefix, quizMsgSpliter } from "../routes/constants";
+    import { userProfilesUrl, addChannelUrl, chatMessageUrl, quizMsgPrefix, quizMsgSpliter, routeLogout } from "../routes/constants";
     import { user, xUser,userList } from "../routes/store";
 
     const dispatch = createEventDispatcher();

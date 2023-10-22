@@ -6,7 +6,7 @@
         userProfileUrl,
         updateUserProfileUrl,
         uploadAvatar,
-        routeLogin,
+        routeLogout,
     } from "../../routes/constants";
     import Spinner from "../spinner.svelte";
     export let mode = "edit";

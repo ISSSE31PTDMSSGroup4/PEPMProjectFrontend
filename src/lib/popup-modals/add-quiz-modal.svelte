@@ -3,7 +3,7 @@
     import { createEventDispatcher } from "svelte";
     import AddQuestion from "../add-question.svelte";
     import Spinner from "../spinner.svelte";
-    import { quizUrl } from "../../routes/constants.js";
+    import { quizUrl, routeLogout } from "../../routes/constants.js";
     import { xUser } from "../../routes/store";
     import Modal from "./base-modal.svelte";
 

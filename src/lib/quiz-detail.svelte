@@ -20,6 +20,7 @@
         editMode,
         quizMode,
         reviewMode,
+        routeLogout,
     } from "../routes/constants.js";
     import { CheckLg, Key, XLg } from "svelte-bootstrap-icons";
 

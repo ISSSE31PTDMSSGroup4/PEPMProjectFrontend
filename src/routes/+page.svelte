@@ -3,7 +3,7 @@
     import Messages from "../lib/messages.svelte";
     import UserList from "../lib/user-list.svelte";
     import NewChat from "../lib/new-chat.svelte";
-    import { quizMsgPrefix, quizMsgSpliter, chatChannelUrl } from "./constants";
+    import { quizMsgPrefix, quizMsgSpliter, chatChannelUrl, routeLogout} from "./constants";
     import { userList, user, xUser, selectedUser, pusher } from "./store";
 
     let userListChannel;

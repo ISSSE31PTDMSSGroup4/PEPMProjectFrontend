@@ -4,7 +4,7 @@
     import Modal from "./base-modal.svelte";
     import Spinner from "../spinner.svelte";
     import { createEventDispatcher } from "svelte";
-    import { questionUrl } from "../../routes/constants.js";
+    import { questionUrl,routeLogout } from "../../routes/constants.js";
     import { xUser } from "../../routes/store";
 
     export let quizId = "";

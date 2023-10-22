@@ -5,7 +5,7 @@
   import Navbar from "../lib/navbar.svelte";
   import Sidebar from "../lib/sidebar.svelte";
   import { user, xUser, pusher } from "./store";
-  import { quizUrl, userProfileUrl, pusherCfgUrl } from "./constants.js";
+  import { quizUrl, userProfileUrl, pusherCfgUrl, routeLogout } from "./constants.js";
   import Pusher from "pusher-js";
   import ProfileModal from "../lib/popup-modals/profile-modal.svelte";
   const url = userProfileUrl;

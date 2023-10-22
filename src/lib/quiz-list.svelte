@@ -9,7 +9,8 @@
     import {
         getUserQuizListUrl,
         viewMode,
-        editMode,
+        editMode,        
+        routeLogout
     } from "../routes/constants.js";
     import AddQuizModal from "./popup-modals/add-quiz-modal.svelte";
     import {

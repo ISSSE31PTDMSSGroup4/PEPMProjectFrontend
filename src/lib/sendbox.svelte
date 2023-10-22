@@ -2,7 +2,7 @@
     import { createEventDispatcher } from "svelte";
     import { Share } from "svelte-bootstrap-icons";
     import Spinner from "./spinner.svelte";
-    import { getUserQuizListUrl } from "../routes/constants";
+    import { getUserQuizListUrl,routeLogout } from "../routes/constants";
     import { quizzes, xUser } from "../routes/store";
 
     const dispatch = createEventDispatcher();
