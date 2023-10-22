@@ -65,7 +65,7 @@
 
     const submitHandler = async () => {
         //Temp Hardcode
-        profileData.avatar = "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp";
+        profileData.avatar = "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp";
         if (!validateBfSubmit()) {
             return;
         }

@@ -3,21 +3,21 @@
     import PersonAdd from "svelte-bootstrap-icons/lib/PersonFillAdd.svelte";
     import PersonRemove from "svelte-bootstrap-icons/lib/PersonFillDash.svelte";
     import { quizAnswering } from "../routes/store";
-    import { userList } from "../routes/store";
+    import { userList, selectedUser } from "../routes/store";
     const dispatch = createEventDispatcher();
     const newUserTempId = -999;
     export let size = "2em"; // string | number
     export let width = size; // string | number
     export let height = size; // string | number
     export let color = "primary";
-    export let selectedUserId = -1;
+    export let selectedUserEmail = "";
     export const handleUserSelect = (item) => {
-        if (!item || !item.id) {
-            selectedUserId = -1;
+        if (!item || !item.email) {
+            selectedUserEmail = "";
             dispatch("selectedUser", item);
             return;
         }
-        selectedUserId = item.id;
+        selectedUserEmail = item.email;
         item.unread = 0;
         dispatch("selectedUser", item);
         quizAnswering.set(false);
@@ -72,8 +72,8 @@
             {#if $userList.length > 0}
                 {#each $userList as user}
                     <button
-                        class="list-group-item list-group-item-action {user.id ===
-                        selectedUserId
+                        class="list-group-item list-group-item-action {user.email ===
+                        $selectedUser?.email
                             ? 'active'
                             : ''} d-flex justify-content-start align-items-center"
                         style="height:4em;"

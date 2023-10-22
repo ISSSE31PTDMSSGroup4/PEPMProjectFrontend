@@ -10,296 +10,6 @@
     let userListChild;
     let bindName = 'newfriend';
 
-    // let userList = [
-    //     {
-    //         id: 1,
-    //         name: "Allen Panda",
-    //         avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
-    //         unread: 0,
-    //         status: "Online",
-    //         messageGroup: [
-    //             {
-    //                 id: 1,
-    //                 time: "19-08-23 7:32 pm",
-    //                 messages: [
-    //                     {
-    //                         id: 111312,
-    //                         user: {
-    //                             userId: 0,
-    //                             name: "Me",
-    //                             avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp",
-    //                         },
-    //                         message: "Test message from me",
-    //                     },
-    //                     {
-    //                         id: 111232,
-    //                         user: {
-    //                             userId: 1,
-    //                             name: "Allen Panda",
-    //                             avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
-    //                         },
-    //                         message: "Good evening",
-    //                     },
-    //                 ],
-    //             },
-    //             {
-    //                 id: 2,
-    //                 time: "Monday 12:32 pm",
-    //                 messages: [
-    //                     {
-    //                         id: 114152,
-    //                         user: {
-    //                             userId: 0,
-    //                             name: "Me",
-    //                             avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp",
-    //                         },
-    //                         message: "How is it going?",
-    //                     },
-    //                     {
-    //                         id: 156654,
-    //                         user: {
-    //                             userId: 1,
-    //                             name: "Allen Panda",
-    //                             avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
-    //                         },
-    //                         message: "Great!",
-    //                     },
-    //                 ],
-    //             },
-    //             {
-    //                 id: 3,
-    //                 time: "Yesterday 15:11 pm",
-    //                 messages: [
-    //                     {
-    //                         id: 125676,
-    //                         user: {
-    //                             userId: 1,
-    //                             name: "Allen Panda",
-    //                             avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
-    //                         },
-    //                         message: "See u tmr",
-    //                     },
-    //                     {
-    //                         id: 215315,
-    //                         user: {
-    //                             userId: 0,
-    //                             name: "Me",
-    //                             avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp",
-    //                         },
-    //                         message: "See u",
-    //                     },
-    //                 ],
-    //             },
-    //             {
-    //                 id: 4,
-    //                 time: "09:00 pm",
-    //                 messages: [
-    //                     {
-    //                         id: 125326,
-    //                         user: {
-    //                             userId: 1,
-    //                             name: "Allen Panda",
-    //                             avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
-    //                         },
-    //                         message: "where are u?",
-    //                     },
-    //                     {
-    //                         id: 154314,
-    //                         user: {
-    //                             userId: 1,
-    //                             name: "Allen Panda",
-    //                             avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
-    //                         },
-    //                         message:
-    //                             quizMsgPrefix +
-    //                             quizMsgSpliter +
-    //                             '{"quiz_id": "c33e8797", "title":"Quiz - Test Title"}',
-    //                     },
-    //                     {
-    //                         id: 765365,
-    //                         user: {
-    //                             userId: 0,
-    //                             name: "Me",
-    //                             avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp",
-    //                         },
-    //                         message: "On the bus, coming",
-    //                     },
-    //                 ],
-    //             },
-    //         ],
-    //     },
-    //     {
-    //         id: 2,
-    //         name: "CC",
-    //         avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/3.webp",
-    //         unread: 1,
-    //         status: "Online",
-    //         messageGroup: [
-    //             {
-    //                 id: 1,
-    //                 time: "Just now",
-    //                 messages: [
-    //                     {
-    //                         id: 111312,
-    //                         user: {
-    //                             userId: 0,
-    //                             name: "Me",
-    //                             avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp",
-    //                         },
-    //                         message: "Test Test",
-    //                     },
-    //                     {
-    //                         id: 111232,
-    //                         user: {
-    //                             userId: 2,
-    //                             name: "CC",
-    //                             avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/3.webp",
-    //                         },
-    //                         message: "Test message from user CC",
-    //                     },
-    //                 ],
-    //             },
-    //         ],
-    //     },
-    //     {
-    //         id: 3,
-    //         name: "SSSr",
-    //         avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/4.webp",
-    //         unread: 0,
-    //         status: "Online",
-    //     },
-    //     {
-    //         id: 4,
-    //         name: "Test Account",
-    //         avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/5.webp",
-    //         unread: 0,
-    //         status: "Offline",
-    //     },
-    //     {
-    //         id: 5,
-    //         name: "QWERT",
-    //         avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/6.webp",
-    //         unread: 0,
-    //         status: "Offline",
-    //     },
-    // ];
-
-    // let selectedUser = {
-    //     id: 1,
-    //     name: "Allen Panda",
-    //     avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
-    //     status: "Online",
-    //     messageGroup: [
-    //         {
-    //             id: 1,
-    //             time: "19-08-23 7:32 pm",
-    //             messages: [
-    //                 {
-    //                     id: 111312,
-    //                     user: {
-    //                         userId: 0,
-    //                         name: "Me",
-    //                         avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp",
-    //                     },
-    //                     message: "Test message from me",
-    //                 },
-    //                 {
-    //                     id: 111232,
-    //                     user: {
-    //                         userId: 1,
-    //                         name: "Allen Panda",
-    //                         avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
-    //                     },
-    //                     message: "Good evening",
-    //                 },
-    //             ],
-    //         },
-    //         {
-    //             id: 2,
-    //             time: "Monday 12:32 pm",
-    //             messages: [
-    //                 {
-    //                     id: 114152,
-    //                     user: {
-    //                         userId: 0,
-    //                         name: "Me",
-    //                         avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp",
-    //                     },
-    //                     message: "How is it going?",
-    //                 },
-    //                 {
-    //                     id: 156654,
-    //                     user: {
-    //                         userId: 1,
-    //                         name: "Allen Panda",
-    //                         avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
-    //                     },
-    //                     message: "Great!",
-    //                 },
-    //             ],
-    //         },
-    //         {
-    //             id: 3,
-    //             time: "Yesterday 15:11 pm",
-    //             messages: [
-    //                 {
-    //                     id: 125676,
-    //                     user: {
-    //                         userId: 1,
-    //                         name: "Allen Panda",
-    //                         avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
-    //                     },
-    //                     message: "See u tmr",
-    //                 },
-    //                 {
-    //                     id: 215315,
-    //                     user: {
-    //                         userId: 0,
-    //                         name: "Me",
-    //                         avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp",
-    //                     },
-    //                     message: "See u",
-    //                 },
-    //             ],
-    //         },
-    //         {
-    //             id: 4,
-    //             time: "09:00 pm",
-    //             messages: [
-    //                 {
-    //                     id: 125326,
-    //                     user: {
-    //                         userId: 1,
-    //                         name: "Allen Panda",
-    //                         avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
-    //                     },
-    //                     message: "where are u?",
-    //                 },
-    //                 {
-    //                     id: 154314,
-    //                     user: {
-    //                         userId: 1,
-    //                         name: "Allen Panda",
-    //                         avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/1.webp",
-    //                     },
-    //                     message:
-    //                         quizMsgPrefix +
-    //                         quizMsgSpliter +
-    //                         '{"quiz_id": "c33e8797", "title":"Quiz - Test Title"}',
-    //                 },
-    //                 {
-    //                     id: 765365,
-    //                     user: {
-    //                         userId: 0,
-    //                         name: "Me",
-    //                         avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp",
-    //                     },
-    //                     message: "On the bus, coming",
-    //                 },
-    //             ],
-    //         },
-    //     ],
-    // };
     let newUser = undefined;
     onMount(async () => {
         await fetchChannelList();
@@ -312,14 +22,13 @@
 
     const subscribeUserList = ()=>{
         userListChannel = $pusher.subscribe($xUser);
-        prevUserChannelName = $xUser;
         userListChannel.bind(bindName, data => receiveNewChat(data));
     }
 
     const unsubscribeUserList = ()=>{
         if(!userListChannel){return;}
         userListChannel.unbind(bindName);
-        pusher.unsubscribe($xUser); 
+        $pusher.unsubscribe($xUser); 
     }
 
     const receiveNewChat = async(data) => {
@@ -333,16 +42,15 @@
             method: "POST",
             headers: { 
                 "Content-Type": "application/json", 
-                // "X-USER": $xUser 
+                "X-USER": $xUser 
             },
             body: JSON.stringify({
                 $xUser,
             }),
         });
-
-        if (response.success) {
+        if (response.ok) {
             const data = await response.json();
-            if (data && data.length > 0) {
+            if (data) {
                 $userList = data;
             }
             console.log("userList", $userList);
@@ -362,10 +70,7 @@
     };
 
     const handleNewChatCreated = (e) => {
-        // newUser = e.detail;
-        // userList = userList.filter((x) => x.id > 0);
-        // userList = [newUser, ...userList];
-        // userListChild.handleUserSelect(userList[0]);
+        handleSelectedUserChanged(e);
     };
 </script>
 

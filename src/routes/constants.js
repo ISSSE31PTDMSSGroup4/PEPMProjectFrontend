@@ -21,11 +21,11 @@ export const getQuizDetailUrl = quizServiceBaseUrl + "/quiz/detail";
 export const quizUrl = quizServiceBaseUrl + "/quiz";
 export const questionUrl = quizServiceBaseUrl + "/quiz/question";
 //chat microservice
-export const pusherCfgUrl = chatServiceBaseUrl + "/chat/config";
-export const chatMessageUrl = chatServiceBaseUrl + "/chat/message";
-export const chatHisotyUrl = chatServiceBaseUrl + "/chat/history";
-export const chatChannelUrl = chatServiceBaseUrl + "/chat/friendlist";
-export const addChannelUrl = chatServiceBaseUrl + "/chat/addfriend";
+export const pusherCfgUrl = chatServiceBaseUrl + "/chat/config/";
+export const chatMessageUrl = chatServiceBaseUrl + "/chat/message/";
+export const chatHisotyUrl = chatServiceBaseUrl + "/chat/history/";
+export const chatChannelUrl = chatServiceBaseUrl + "/chat/friendlist/";
+export const addChannelUrl = chatServiceBaseUrl + "/chat/addfriend/";
 //route
 export const routeRoot = base + "/";
 export const routeQuiz = base +"/quiz";

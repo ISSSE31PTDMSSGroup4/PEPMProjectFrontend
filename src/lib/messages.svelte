@@ -18,6 +18,7 @@
         selectedUser,
         quizAnswering,
         quizHistory,
+        pusher,
     } from "../routes/store";
     import {
         quizMsgPrefix,
@@ -27,9 +28,9 @@
     import Spinner from "./spinner.svelte";
 
     const bindName = "message";
-    let promise;
+    let fetching = true;
+    let mounted = false;
     let newMessage = "";
-    let pusher;
     let channel;
     let prevChannelName;
     let messages;
@@ -37,20 +38,22 @@
     let targetQuiz = { quiz_id: "" };
 
     selectedUser.subscribe((value) => {
-        if (value) {
+        if (value && mounted) {
             switchReceiver(value);
         }
     });
 
     onMount(async () => {
         scrollToBottom();
+        switchReceiver($selectedUser);
+        mounted = true;
     });
 
     // Unsubscribe from realtime messages
     onDestroy(() => {
         if (channel) {
             channel.unbind(bindName);
-            pusher.unsubscribe(prevChannelName);
+            $pusher.unsubscribe(prevChannelName);
         }
     });
 
@@ -59,12 +62,11 @@
     });
 
     const scrollToBottom = () => {
-        if ($quizAnswering || !$selectedUser) {
+        if ($quizAnswering || !$selectedUser || fetching) {
             return;
         }
         var domWrapper = document.querySelector(".modal-body");
         domWrapper.scrollTo(0, 9999999);
-        console.log(domWrapper.scrollTop);
     };
 
     const sendMessage = async (e) => {
@@ -72,86 +74,27 @@
         console.log("send msg", content);
 
         await submit(content);
-        // if (
-        //     $selectedUser.messageGroup &&
-        //     $selectedUser.messageGroup.length > 0
-        // ) {
-        //     var lastMsgGroupItem =
-        //         $selectedUser.messageGroup[
-        //             $selectedUser.messageGroup.length - 1
-        //         ];
-        //     if (lastMsgGroupItem.messages.length > 0) {
-        //         var newMsg = {
-        //             id: Math.random(),
-        //             user: {
-        //                 userId: 0,
-        //                 name: "Me",
-        //                 avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp",
-        //             },
-        //             message: content,
-        //         };
-        //         $selectedUser.messageGroup[
-        //             $selectedUser.messageGroup.length - 1
-        //         ].messages = [
-        //             ...$selectedUser.messageGroup[
-        //                 $selectedUser.messageGroup.length - 1
-        //             ].messages,
-        //             newMsg,
-        //         ];
-        //     } else {
-        //         var newMsgGroupItem = {
-        //             id: Math.random(),
-        //             time: "Just now",
-        //             messages: [
-        //                 {
-        //                     id: Math.random(),
-        //                     user: {
-        //                         userId: 0,
-        //                         name: "Me",
-        //                         avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp",
-        //                     },
-        //                     message: content,
-        //                 },
-        //             ],
-        //         };
+    };
 
-        //         $selectedUser.messageGroup = [
-        //             ...$selectedUser.messageGroup,
-        //             newMsgGroupItem,
-        //         ];
-        //     }
-        // } else {
-        //     var newMsgGroup = [
-        //         {
-        //             id: Math.random(),
-        //             time: "Just now",
-        //             messages: [
-        //                 {
-        //                     id: Math.random(),
-        //                     user: {
-        //                         userId: 0,
-        //                         name: "Me",
-        //                         avatar: "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp",
-        //                     },
-        //                     message: content,
-        //                 },
-        //             ],
-        //         },
-        //     ];
-        //     $selectedUser.messageGroup = newMsgGroup;
-        // }
+    const sendQuiz = async (e) => {
+        let content = e.detail;
+        console.log("send quiz", JSON.stringify(content));
+
+        let encodeContent =
+            quizMsgPrefix + quizMsgSpliter + JSON.stringify(content);
+        await submit(encodeContent);
     };
 
     const submit = async (msg) => {
         console.log("submit triggered");
         const message_body = JSON.stringify({
             userInfo: {
-                userId: $user.id,
+                userId: $user._id,
                 name: $user.name,
                 avatar: $user.avatar,
             },
             receiverInfo: {
-                userId: $selectedUser.id,
+                userId: $selectedUser._id,
                 avatar: $selectedUser.avatar,
                 name: $selectedUser.name,
             },
@@ -159,12 +102,11 @@
             userEmail: $xUser,
             receiverEmail: $selectedUser.email,
         });
-
         await fetch(chatMessageUrl, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                // "X-USER": $xUser,
+                "X-USER": $xUser,
             },
             body: message_body,
         });
@@ -190,18 +132,18 @@
         let newChannelName = getChannelName($xUser, newUser.email);
         if (channel) {
             channel.unbind(bindName);
-            pusher.unsubscribe(prevChannelName);
+            $pusher.unsubscribe(prevChannelName);
             // Clear the messages in current window
             messages = [];
         }
-        channel = pusher.subscribe(newChannelName);
+        channel = $pusher.subscribe(newChannelName);
 
         console.log("switchReceiver triggered: ", newChannelName);
 
         prevChannelName = newChannelName;
 
         // Fetch chat history when switching receiver
-        promise = await fetchHistory();
+        await fetchHistory();
         channel.bind(bindName, (data) => receiveNewMessage(data));
     };
 
@@ -212,7 +154,7 @@
     const handleQuizClick = (message, mode) => {
         let quiz = getQuizObj(message);
         if (!quiz) {
-            alert("Invalid quiz link");
+            //alert("Invalid quiz link");
             return;
         }
         targetQuiz.quiz_id = quiz.quiz_id;
@@ -254,7 +196,7 @@
     function checkQuizSubmitStatus(message) {
         let quiz = getQuizObj(message);
         if (!quiz) {
-            alert("Invalid quiz link");
+            //alert("Invalid quiz link");
             return;
         }
         let historyObj = $quizHistory.find((x) => x.quiz_id == quiz.quiz_id);
@@ -267,24 +209,29 @@
     }
 
     const fetchHistory = async () => {
+        fetching = true;
+        let message_body = JSON.stringify({
+            senderEmail: $xUser,
+            receiverEmail: $selectedUser.email,
+        });
+
+        console.log("gethistory req body", message_body);
         const response = await fetch(chatHisotyUrl, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                // "X-USER": $xUser
+                "X-USER": $xUser,
             },
-            body: JSON.stringify({
-                senderEmail: $xUser,
-                receiverEmail: $selectedUser.email,
-            }),
+            body: message_body,
         });
 
-        if (response.success) {
+        if (response.ok) {
             const data = await response.json();
             if (data && data.length > 0) {
-                $messages = data;
+                messages = data;
             }
             console.log("messages", messages);
+            fetching = false;
         } else {
             const text = await response.text();
             if (text.includes("Forbidden")) {
@@ -292,6 +239,7 @@
                 location.replace(routeLogout);
             }
             throw new Error(text);
+            fetching = false;
         }
     };
 
@@ -303,6 +251,7 @@
     }
 
     function formatUnixTime(unixTime) {
+        console.log("unix", unixTime);
         const milliseconds = unixTime;
 
         const date = new Date(milliseconds);
@@ -345,130 +294,111 @@
 
 {#if $quizAnswering}
     <QuizDetail {targetQuiz} quizDetailMode={enterQuizMode} />
-{:else}
-    {#await promise}
-        <Spinner />
-    {:then data}
-        {#if $selectedUser}
-            <div class="modal-dialog-scrollable">
-                <div class="modal-content">
-                    <div class="modal-body">
-                        <div class="msg-body">
-                            {#if messages && messages.length > 0}
-                                {#each messages as message}
-                                    <span class="time"
-                                        >{formatUnixTime(message.time)}</span
-                                    >
-                                    <ul>
-                                        <li
-                                            class={message.userEmail !== $xUser
-                                                ? "sender"
-                                                : "reply"}
-                                        >
-                                            <img
-                                                class="rounded-circle"
-                                                src={getAvatar(message)
-                                                    ? getAvatar(message)
-                                                    : "./icons8-user-96.png"}
-                                                alt="avatar"
-                                                width="50px"
-                                            />
-                                            <div class="msg-content">
+{:else if fetching}
+    <Spinner />
+{:else if $selectedUser}
+    <div class="modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="msg-body">
+                    {#if messages && messages.length > 0}
+                        {#each messages as message}
+                            <span class="time"
+                                >{formatUnixTime(message.timestamp)}</span
+                            >
+                            <ul>
+                                <li
+                                    class={message.userEmail !== $xUser
+                                        ? "sender"
+                                        : "reply"}
+                                >
+                                    <img
+                                        class="rounded-circle"
+                                        src={getAvatar(message)
+                                            ? getAvatar(message)
+                                            : "./icons8-user-96.png"}
+                                        alt="avatar"
+                                        width="50px"
+                                    />
+                                    <div class="msg-content">
+                                        {#if message.userEmail !== $xUser}
+                                            <small>
+                                                {message.user?.name}
+                                            </small>
+                                        {/if}
+                                        {#if checkQuizMsg(message.message)}
+                                            <div class="card text-center">
+                                                <div class="card-header">
+                                                    {#if message.userEmail === $xUser}
+                                                        You've shared below quiz
+                                                    {:else if checkQuizSubmitStatus(message.message) == submittedQuiz}
+                                                        You've finished quiz
+                                                    {:else if checkQuizSubmitStatus(message.message) == draftQuiz}
+                                                        Click to continue the
+                                                        quiz
+                                                    {:else}
+                                                        {message.userInfo?.name}
+                                                        invite you join the quiz
+                                                    {/if}
+                                                </div>
+                                                <div class="card-body">
+                                                    {getQuizObj(message.message)
+                                                        ?.title}
+                                                </div>
                                                 {#if message.userEmail !== $xUser}
-                                                    <small>
-                                                        {message.user?.name}
-                                                    </small>
-                                                {/if}
-                                                {#if checkQuizMsg(message.message)}
                                                     <div
-                                                        class="card text-center"
+                                                        class="card-footer text-body-secondary"
+                                                        style="align-content: center;"
                                                     >
-                                                        <div
-                                                            class="card-header"
-                                                        >
-                                                            {#if message.userEmail !== $xUser}
-                                                                You've shared
-                                                                below quiz
-                                                            {:else if checkQuizSubmitStatus(message.message) == submittedQuiz}
-                                                                You've finished
-                                                                quiz
-                                                            {:else if checkQuizSubmitStatus(message.message) == draftQuiz}
-                                                                Click to
-                                                                continue the
-                                                                quiz
-                                                            {:else}
-                                                                {message
-                                                                    .userInfo
-                                                                    ?.name}
-                                                                invite you join the
-                                                                quiz
-                                                            {/if}
-                                                        </div>
-                                                        <div class="card-body">
-                                                            {getQuizObj(
-                                                                message.message
-                                                            )?.title}
-                                                        </div>
-                                                        {#if message.userEmail !== $xUser}
-                                                            <div
-                                                                class="card-footer text-body-secondary"
-                                                                style="align-content: center;"
+                                                        {#if checkQuizSubmitStatus(message.message) == submittedQuiz}
+                                                            <button
+                                                                class="btn btn-outline-primary"
+                                                                on:click={() =>
+                                                                    handleQuizClick(
+                                                                        message.message,
+                                                                        reviewMode
+                                                                    )}
+                                                                >Review Result</button
                                                             >
-                                                                {#if checkQuizSubmitStatus(message.message) == submittedQuiz}
-                                                                    <button
-                                                                        class="btn btn-outline-primary"
-                                                                        on:click={() =>
-                                                                            handleQuizClick(
-                                                                                message.message,
-                                                                                reviewMode
-                                                                            )}
-                                                                        >Review
-                                                                        Result</button
-                                                                    >
-                                                                {:else if checkQuizSubmitStatus(message.message) == draftQuiz}
-                                                                    <button
-                                                                        class="btn btn-outline-success"
-                                                                        on:click={() =>
-                                                                            handleQuizClick(
-                                                                                message.message,
-                                                                                quizMode
-                                                                            )}
-                                                                        >Continue</button
-                                                                    >
-                                                                {:else}
-                                                                    <button
-                                                                        class="btn btn-outline-info"
-                                                                        on:click={() =>
-                                                                            handleQuizClick(
-                                                                                message.message,
-                                                                                quizMode
-                                                                            )}
-                                                                        >Start
-                                                                        Quiz</button
-                                                                    >
-                                                                {/if}
-                                                            </div>
+                                                        {:else if checkQuizSubmitStatus(message.message) == draftQuiz}
+                                                            <button
+                                                                class="btn btn-outline-success"
+                                                                on:click={() =>
+                                                                    handleQuizClick(
+                                                                        message.message,
+                                                                        quizMode
+                                                                    )}
+                                                                >Continue</button
+                                                            >
+                                                        {:else}
+                                                            <button
+                                                                class="btn btn-outline-info"
+                                                                on:click={() =>
+                                                                    handleQuizClick(
+                                                                        message.message,
+                                                                        quizMode
+                                                                    )}
+                                                                >Start Quiz</button
+                                                            >
                                                         {/if}
                                                     </div>
-                                                {:else}
-                                                    <p class="msg-text">
-                                                        {message.message}
-                                                    </p>
                                                 {/if}
                                             </div>
-                                        </li>
-                                    </ul>
-                                {/each}
-                            {/if}
-                        </div>
-                    </div>
+                                        {:else}
+                                            <p class="msg-text">
+                                                {message.message}
+                                            </p>
+                                        {/if}
+                                    </div>
+                                </li>
+                            </ul>
+                        {/each}
+                    {/if}
                 </div>
             </div>
-            <Sendbox on:messageSent={sendMessage} />
-        {/if}
-    {:catch error}
-        <p style="color: red">{error.message}</p>
-    {/await}
+        </div>
+    </div>
+    <Sendbox on:messageSent={sendMessage} on:selectedQuiz={sendQuiz} />
 {/if}
 
 <style>

@@ -117,7 +117,7 @@
             const text = await response.text();
             processing = false;
             closeHandler();
-            if (text.includes("403")) {
+            if (text.includes("Forbidden")) {
                 user.set(undefined);
                 location.replace(routeLogout);
                 return;
