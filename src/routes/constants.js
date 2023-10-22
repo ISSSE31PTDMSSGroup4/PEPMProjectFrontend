@@ -33,8 +33,8 @@ export const routeQuiz = base +"/quiz";
 export const routeProfile = base +"/profile";
 export const routeAbout = base +"/about";
 //login microservice
-export const routeLogin = loginServiceBaseUrl + "/auth/initiate_auth";
-export const routeLogout = loginServiceBaseUrl + "/auth/logout";
+export const routeLogin = baseApiUrl + "/auth/initiate_auth";
+export const routeLogout = baseApiUrl + "/auth/logout";
 
 //Other constants
 export const viewMode = 1;
