@@ -144,7 +144,7 @@
         creatProfileHandler();
         return true;
       }
-      if (text.includes("403")) {
+      if (text.includes("Forbidden")) {
         user.set(undefined);
         location.replace(routeLogout);
       }

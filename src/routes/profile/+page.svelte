@@ -110,10 +110,6 @@
         );
     }
 
-    textarea {
-        resize: none;
-    }
-
     p {
         word-wrap: break-word;
         white-space: pre-line;

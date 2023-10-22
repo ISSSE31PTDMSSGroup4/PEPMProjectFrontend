@@ -130,7 +130,7 @@
         } else {
             const text = await response.text();
             processing = false;
-            if (text.includes("403")) {
+            if (text.includes("Forbidden")) {
                 user.set(undefined);
                 location.replace(routeLogout);
             }
@@ -144,6 +144,8 @@
         }
         avatarUploading = true;
         let url = uploadAvatar;
+        const formData = new FormData();
+        formData.append('image', image);
         const response = await fetch(url, {
             method: "POST",
             headers: {
@@ -151,7 +153,7 @@
                 "Content-Type": image.type,
                 "X-USER": $xUser,
             },
-            body: image,
+            body: formData,
         });
         if (response.ok) {
             const data = await response.json();
@@ -164,7 +166,7 @@
         } else {
             const text = await response.text();
             processing = false;
-            if (text.includes("403")) {
+            if (text.includes("Forbidden")) {
                 user.set(undefined);
                 location.replace(routeLogout);
             }

@@ -3,6 +3,7 @@
     import { Share } from "svelte-bootstrap-icons";
     import Spinner from "./spinner.svelte";
     import { quizzes } from "../routes/store";
+
     const dispatch = createEventDispatcher();
     const sendMessage = (content) => {
         if (!content || content === "") {
