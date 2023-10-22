@@ -60,7 +60,7 @@
         const response = await fetch(url + "?quiz_id=" + targetQuiz.quiz_id, {
             method: "GET",
             headers: {
-                "X-USER": $xUser,
+                //"X-USER": $xUser,
             },
         });
         if (response.ok) {
@@ -253,7 +253,7 @@
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                "X-USER": $xUser,
+                //"X-USER": $xUser,
             },
             body: JSON.stringify(quizDetail),
         });
@@ -299,7 +299,7 @@
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
-                "X-USER": $xUser,
+                //"X-USER": $xUser,
             },
             body: JSON.stringify({
                 quiz_id: quizDetail.quiz_id,
@@ -335,7 +335,7 @@
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
-                "X-USER": $xUser,
+                //"X-USER": $xUser,
             },
             body: JSON.stringify(reqBody),
         });
@@ -363,7 +363,7 @@
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
-                "X-USER": $xUser,
+                //"X-USER": $xUser,
             },
             body: JSON.stringify({
                 quiz_id: quizDetail.quiz_id,

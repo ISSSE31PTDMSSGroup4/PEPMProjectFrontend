@@ -116,7 +116,7 @@
             method: method,
             headers: {
                 "Content-Type": "application/json",
-                "X-USER": $xUser,
+                //"X-USER": $xUser,
             },
             body: JSON.stringify(reqBody),
         });
@@ -151,7 +151,7 @@
             headers: {
                 "Content-Type": "multipart/form-data",
                 "Content-Type": image.type,
-                "X-USER": $xUser,
+                //"X-USER": $xUser,
             },
             body: formData,
         });

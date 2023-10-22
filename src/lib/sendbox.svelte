@@ -38,7 +38,7 @@
         const response = await fetch(getUserQuizListUrl, {
             method: "GET",
             headers: {
-                "X-USER": $xUser,
+                //"X-USER": $xUser,
             },
         });
         if (response.ok) {

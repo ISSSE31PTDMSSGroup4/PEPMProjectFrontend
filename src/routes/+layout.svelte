@@ -124,7 +124,7 @@
     const response = await fetch(url, {
       method: "GET",
       headers: {
-        "X-USER": $xUser,
+        //"X-USER": $xUser,
       },
     });
     if (response.ok) {

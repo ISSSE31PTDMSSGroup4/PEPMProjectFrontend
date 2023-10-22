@@ -93,7 +93,7 @@
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "X-USER": $xUser,
+                //"X-USER": $xUser,
             },
             body: JSON.stringify(quiz),
         });

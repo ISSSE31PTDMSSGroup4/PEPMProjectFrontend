@@ -57,7 +57,11 @@
 
         await fetch(addChannelUrl, {
             method: 'POST',
-            headers: {'Content-Type': 'application/json', 'X-USER': $xUser},
+            headers: 
+            {
+                'Content-Type': 'application/json', 
+                //'X-USER': $xUser
+            },
             body: message_body
         });
     }
@@ -82,7 +86,7 @@
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "X-USER": $xUser,
+                //"X-USER": $xUser,
             },
             body: message_body,
         });
