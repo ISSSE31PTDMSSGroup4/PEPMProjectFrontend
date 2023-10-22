@@ -27,3 +27,5 @@ export let quizzes = writable([]);
 export let quizAnswering = writable(false);
 export let xUser = writable("");
 export let pusher = writable(undefined); 
+export let userList = writable([]);
+export let selectedUser = writable(undefined);

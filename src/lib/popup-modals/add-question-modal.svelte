@@ -104,6 +104,11 @@
         });
         if (response.ok) {
             const data = await response.json();
+            if(data.code && data.code !== 200){
+                alert(data.message);
+                processing = false;
+                return;
+            }
             console.log("request success", data);
             processing = false;
             dispatch("questionCreated");
@@ -112,7 +117,7 @@
             const text = await response.text();
             processing = false;
             closeHandler();
-            if (text.includes("403")) {
+            if (text.includes("Forbidden")) {
                 user.set(undefined);
                 location.replace(routeLogout);
                 return;

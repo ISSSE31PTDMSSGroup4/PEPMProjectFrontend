@@ -50,7 +50,7 @@
                         />
                     </div>
                     <div class="d-flex flex-row align-items-center">
-                        <h5 style="margin-right: 1rem;">Expanation:</h5>
+                        <h5 style="margin-right: 1rem;">Explanation:</h5>
                         <input
                             type="text"
                             class="form-control"

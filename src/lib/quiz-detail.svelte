@@ -55,6 +55,7 @@
         if (!targetQuiz) {
             return;
         }
+        console.log(targetQuiz.quiz_id);
         const response = await fetch(url + "?quiz_id=" + targetQuiz.quiz_id, {
             method: "GET",
             headers: {
@@ -63,6 +64,9 @@
         });
         if (response.ok) {
             const data = await response.json();
+            if(data.code && data.code === 400){
+                throw new Error(data.message);
+            }
             data.questions?.sort((a, b) => {
                 return parseInt(a.index) - parseInt(b.index);
             });
@@ -82,7 +86,7 @@
     }
 
     function unauthorizeHandler(text) {
-        if (text.includes("403")) {
+        if (text.includes("Forbidden")) {
             user.set(undefined);
             location.replace(routeLogout);
             return true;
@@ -254,6 +258,10 @@
         });
         if (response.ok) {
             const data = await response.json();
+            if(data.code && data.code !== 200){
+                alert(data.message);
+                return;
+            }
             console.log("request success", data);
             updateQuizSnapshot();
             $reloadQuizList = {};
@@ -298,6 +306,10 @@
         });
         if (response.ok) {
             const data = await response.json();
+            if(data.code && data.code !== 200){
+                alert(data.message);
+                return;
+            }
             console.log("request success", data);
             removeQuizModal.closeHandler();
             removeQuizProcessing = false;
@@ -328,6 +340,10 @@
         });
         if (response.ok) {
             const data = await response.json();
+            if(data.code && data.code !== 200){
+                alert(data.message);
+                return;
+            }
             console.log("request success", data);
             reloadTrigger = {};
         } else {
@@ -355,8 +371,12 @@
         });
         if (response.ok) {
             const data = await response.json();
+            if(data.code && data.code !== 200){
+                alert(data.message);
+                return;
+            }
             console.log("request success", data);
-            currIndex--;
+            if(currIndex > 1){ currIndex--};
             removeQuizModal.closeHandler();
             removeQuestionProcessing = false;
             reloadTrigger = {};
@@ -395,9 +415,9 @@
         if (!historyObj) {
             return false;
         }
-        question_id = quizDetail?.questions?.at(currIndex - 1).question_id;
+        let question_id = quizDetail?.questions?.at(currIndex - 1)?.question_id;
         let questionHistoryObj = historyObj.questions.find(
-            (x) => (x.question_id == x.question_id) == question_id
+            (x) => (x.question_id == question_id)
         );
 
         if (!questionHistoryObj) {
@@ -428,7 +448,7 @@
                         currIndex - 1
                     ).question_id;
                     let questionHistoryObj = historyObj.questions.find(
-                        (x) => (x.question_id == x.question_id) == question_id
+                        (x) => (x.question_id == question_id)
                     );
                     if (questionHistoryObj) {
                         questionHistoryObj.answer = selectedOption;
@@ -441,6 +461,7 @@
                             question_id: question_id,
                             answer: selectedOption,
                         };
+                        console.log("add answer", questionHistoryObj);
                         historyObj.questions = [
                             ...historyObj.questions,
                             questionHistoryObj,

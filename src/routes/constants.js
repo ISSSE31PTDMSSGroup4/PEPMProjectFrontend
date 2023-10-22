@@ -5,9 +5,9 @@ import { base } from "$app/paths";
 //const baseApiUrl = "https://88847fa7-9974-44f1-b303-5e68a533bd65.mock.pstmn.io";
 //Domain Server
 const baseApiUrl = "https://issse31ptdmss.xyz/api";
-const chatServiceBaseUrl = "http://localhost:8000/api";
+const chatServiceBaseUrl = "http://localhost:5005/api";
 const loginServiceBaseUrl = "http://localhost:5000";
-const userServiceBaseUrl = "http://localhost:8001";
+const userServiceBaseUrl = "http://localhost:8001/api";
 //const quizServiceBaseUrl = "https://88847fa7-9974-44f1-b303-5e68a533bd65.mock.pstmn.io";
 const quizServiceBaseUrl = "http://localhost:5050/api";
 //user profile microservice
@@ -21,8 +21,12 @@ export const getQuizDetailUrl = baseApiUrl + "/quiz/detail";
 export const quizUrl = baseApiUrl + "/quiz";
 export const questionUrl = baseApiUrl + "/quiz/question";
 //chat microservice
-export const pusherCfgUrl = baseApiUrl + "/pusher_config";
-export const pusherMessageUrl = baseApiUrl + "/message";
+export const pusherCfgUrl = baseApiUrl + "/chat/config/";
+export const chatMessageUrl = baseApiUrl + "/chat/message/";
+export const chatHisotyUrl = baseApiUrl + "/chat/history/";
+export const chatChannelUrl = baseApiUrl + "/chat/friendlist/";
+export const addChannelUrl = baseApiUrl + "/chat/addfriend/";
+
 //route
 export const routeRoot = base + "/";
 export const routeQuiz = base +"/quiz";
