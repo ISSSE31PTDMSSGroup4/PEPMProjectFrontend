@@ -321,9 +321,9 @@
                                         width="50px"
                                     />
                                     <div class="msg-content">
-                                        {#if message.userEmail !== $xUser}
-                                            <small>
-                                                {message.user?.name}
+                                        {#if message.userEmail !== $xUser && message.userInfo?.name}                                        
+                                            <small>                                                
+                                                {message.userInfo?.name}
                                             </small>
                                         {/if}
                                         {#if checkQuizMsg(message.message)}
