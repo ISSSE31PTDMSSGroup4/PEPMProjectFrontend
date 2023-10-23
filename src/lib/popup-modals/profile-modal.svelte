@@ -43,15 +43,16 @@
             alert("Only support jpg and png file");
             return;
         }
+        console.log(image);
+
+        // let reader = new FileReader();
+        // reader.readAsDataURL(image);
+        // reader.onload = async (e) => {
+        //     console.log("form-data image", e.target.result);        
+        //     await postUploadAvatar(e.target.result);
+        // };
 
         await postUploadAvatar(image);
-        //let reader = new FileReader();
-        //reader.readAsDataURL(image);
-        //reader.onload = (e) => {
-        //profileData.avatar = e.target.result;
-        //$user.avatar =  e.target.result;
-        //TODO: Call API to upload the avatar file
-        //};
     };
 
     export const showHandler = () => {
@@ -65,7 +66,8 @@
 
     const submitHandler = async () => {
         //Temp Hardcode
-        profileData.avatar = "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp";
+        profileData.avatar =  "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp";
+        //profileData.avatar =  'https://user-profilepic-bucket.s3.ap-southeast-1.amazonaws.com/assets/a12f3f1b-ee9e-46a7-8e62-d438c9592485';
         if (!validateBfSubmit()) {
             return;
         }
@@ -149,8 +151,8 @@
         const response = await fetch(url, {
             method: "POST",
             headers: {
-                "Content-Type": "multipart/form-data",
-                "Content-Type": image.type,
+                //"Content-Type": "multipart/form-data",
+                //"Content-Type": image.type,
                 "X-USER": $xUser,
             },
             body: formData,
@@ -158,10 +160,10 @@
         if (response.ok) {
             const data = await response.json();
             console.log("respose", data);
-            let res = JSON.parse(data);
-            profileData.avatar = res.avatar;
+            //let res = JSON.parse(data);
+            profileData.avatar = data.url;
             if (mode === "edit") {
-                $user.avatar = res.avatar;
+                $user.avatar = data.url;
             }
         } else {
             const text = await response.text();
