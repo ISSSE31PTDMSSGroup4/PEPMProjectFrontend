@@ -7,6 +7,7 @@
         updateUserProfileUrl,
         uploadAvatar,
         routeLogout,
+        assetUrl
     } from "../../routes/constants";
     import Spinner from "../spinner.svelte";
     export let mode = "edit";
@@ -66,7 +67,7 @@
 
     const submitHandler = async () => {
         //Temp Hardcode
-        profileData.avatar =  "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp";
+        //profileData.avatar =  "https://mdbcdn.b-cdn.net/img/new/avatars/2.webp";
         //profileData.avatar =  'https://user-profilepic-bucket.s3.ap-southeast-1.amazonaws.com/assets/a12f3f1b-ee9e-46a7-8e62-d438c9592485';
         if (!validateBfSubmit()) {
             return;
@@ -160,11 +161,12 @@
         if (response.ok) {
             const data = await response.json();
             console.log("respose", data);
+            let avatar = replaceImageUrl(data.url);
             //let res = JSON.parse(data);
-            profileData.avatar = data.url;
-            if (mode === "edit") {
-                $user.avatar = data.url;
-            }
+            profileData.avatar = avatar;
+            // if (mode === "edit") {
+            //     $user.avatar = avatar;
+            // }
         } else {
             const text = await response.text();
             processing = false;
@@ -175,6 +177,16 @@
             alert(text);
         }
         avatarUploading = false;
+    }
+
+    function replaceImageUrl(originalUrl){
+        if(!originalUrl) {return originalUrl; }
+        let urls = originalUrl.split('/');
+        console.log('splitted url', urls);
+        if(!urls || urls.length <= 0){return originalUrl;}
+        let newUrl = assetUrl + urls[urls.length - 1];
+        console.log('newUrl', newUrl);
+        return newUrl;
     }
 </script>
 
