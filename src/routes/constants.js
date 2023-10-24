@@ -4,6 +4,7 @@ import { base } from "$app/paths";
 //Personal Postman Mock Server
 //const baseApiUrl = "https://88847fa7-9974-44f1-b303-5e68a533bd65.mock.pstmn.io";
 //Domain Server
+export const assetUrl ="https://issse31ptdmss.xyz/assets/";
 const baseApiUrl = "https://issse31ptdmss.xyz/api";
 const chatServiceBaseUrl = "http://localhost:5005/api";
 const loginServiceBaseUrl = "http://localhost:5000";

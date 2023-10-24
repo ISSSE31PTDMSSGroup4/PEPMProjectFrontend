@@ -7,6 +7,7 @@
         updateUserProfileUrl,
         uploadAvatar,
         routeLogout,
+        assetUrl
     } from "../../routes/constants";
     import Spinner from "../spinner.svelte";
     export let mode = "edit";
@@ -160,11 +161,12 @@
         if (response.ok) {
             const data = await response.json();
             console.log("respose", data);
+            let avatar = replaceImageUrl(data.url);
             //let res = JSON.parse(data);
-            profileData.avatar = data.url;
-            if (mode === "edit") {
-                $user.avatar = data.url;
-            }
+            profileData.avatar = avatar;
+            // if (mode === "edit") {
+            //     $user.avatar = avatar;
+            // }
         } else {
             const text = await response.text();
             processing = false;
@@ -175,6 +177,16 @@
             alert(text);
         }
         avatarUploading = false;
+    }
+
+    function replaceImageUrl(originalUrl){
+        if(!originalUrl) {return originalUrl; }
+        let urls = originalUrl.split('/');
+        console.log('splitted url', urls);
+        if(!urls || urls.length <= 0){return originalUrl;}
+        let newUrl = assetUrl + urls[urls.length - 1];
+        console.log('newUrl', newUrl);
+        return newUrl;
     }
 </script>
 
