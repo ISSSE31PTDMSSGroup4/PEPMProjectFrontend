@@ -12,6 +12,9 @@ const config = {
     csrf:{
       checkOrigin:false
     }
-  }
+  },
+  compilerOptions: {
+    accessors: process.env.TEST,
+  },
 };
 export default config;
